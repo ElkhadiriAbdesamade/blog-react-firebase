@@ -25,7 +25,7 @@ const SignUp = () => {
         get_Countries()
     }, [])// eslint-disable-line react-hooks/exhaustive-deps
     return (
-        <section className="h-screen">
+        <section className="md:h-screen">
 
             <div className="container px-6 py-12 h-full">
                 <h1 className="text-5xl font-bold text-center">Sign Up</h1>

@@ -8,6 +8,7 @@ import Trending from "./components/Trending";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import NotFound from "./components/NotFound";
 
 function App() {
 
@@ -28,8 +29,9 @@ function App() {
             <Route path='/' element={[<Trending key={'t'}/>, <Post key={'p'}/>]} />
             <Route path='/sign_in' element={<SignIn />} />
             <Route path='/sign_up' element={<SignUp />} />
+            <Route path='*' element={<NotFound/>}/>
           </Routes>
-
+          
           <Footer />
           <BackToTop />
         </div>

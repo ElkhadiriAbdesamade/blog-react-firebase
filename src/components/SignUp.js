@@ -38,9 +38,9 @@ const SignUp = () => {
                         />
                     </div>
                     <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
-                        <form>
+                        <form className="flex items-center flex-col">
 
-                            <div className="mb-6 flex gap-2">
+                            <div className="mb-6 flex gap-2 w-full">
                                 <input
                                     type="text"
                                     className="form-control w-[50%] px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -52,7 +52,7 @@ const SignUp = () => {
                                     placeholder="Last Name"
                                 />
                             </div>
-                            <div className="mb-6">
+                            <div className="mb-6 w-full">
                                 <input
                                     type="text"
                                     className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -60,8 +60,9 @@ const SignUp = () => {
                                 />
                             </div>
                           
-                            <div className="mb-6">
+                            <div className="mb-6 w-full">
                                 <select id="countries" className="bg-gray-50 border border-gray-300 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <option value="" selected>choose your country</option>
                                 {countries.map((count) => {
                                         return <option key={count.name} value={count.name}>{count.name}
                                         </option>
@@ -69,17 +70,17 @@ const SignUp = () => {
                                 </select>
                             </div>
 
-                            <div className="mb-6">
+                            <div className="mb-6 w-full">
                                 <input
                                     type="password"
                                     className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                     placeholder="Password"
                                 />
                             </div>
-                            <div className="mb-6">
+                            <div className="mb-6 w-full">
                                 <input
                                     type="password"
-                                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none "
                                     placeholder="Confirm Password"
                                 />
                             </div>
@@ -95,7 +96,7 @@ const SignUp = () => {
                             </button>
 
                             <div
-                                className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5"
+                                className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5 w-full"
                             >
                                 <p className="text-center font-semibold mx-4 mb-0 dark:text-white">OR</p>
                             </div>
@@ -111,7 +112,19 @@ const SignUp = () => {
 
                                 <span className="mr-4"><i className="fa-brands fa-google"></i></span>Continue with Google
                             </a>
-
+                            <div
+                                className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5 w-full"
+                            >
+                                <p className="text-center font-semibold mx-4 mb-0 dark:text-white">you already have an account ?</p>
+                            </div>
+                            <a
+                                type="submit"
+                                className="inline-block px-7 py-3 bg-[#F79918] text-white font-medium text-sm leading-snug uppercase w-[50%] rounded shadow-md hover:bg-[#F79950] hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0  active:shadow-lg transition duration-150 ease-in-out text-center"
+                                data-mdb-ripple="true"
+                                href="/sign_in"
+                                data-mdb-ripple-color="light">
+                                Sign In
+                            </a>
                         </form>
                     </div>
                 </div>

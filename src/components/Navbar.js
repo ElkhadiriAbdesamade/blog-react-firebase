@@ -15,7 +15,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
 
 
     return (
-        <nav  className="py-3 dark:bg-[#404258] border-b-[1px] dark:border-[#50577A] shadow-xl dark:text-white">
+        <nav  className="py-3 dark:bg-[#404258] border-b-[1px] dark:border-[#50577A] shadow-xl dark:shadow-xl dark:shadow-slate-500 dark:text-white">
             <div id='top' className='absolute top-[-50px]'>
 
             </div>

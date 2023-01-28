@@ -40,7 +40,7 @@ const Trending = () => {
                             <div className="grid md:grid-flow-col dark:bg-[#50577A] p-8">
                                 <div className="inline-grid md:mr-8 ">
                                     <a href="/">
-                                        <img src="https://preview.colorlib.com/theme/magdesign/images/post_lg_2.jpg" alt="Img" className="rounded-xl shadow-xl" />
+                                        <img src="https://preview.colorlib.com/theme/magdesign/images/post_lg_2.jpg" alt="Img" className="rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
                                     </a>
                                 </div>
                                 <div className="self-center text-[14px] inline-grid ">
@@ -70,7 +70,7 @@ const Trending = () => {
                             <div className="grid md:grid-flow-col dark:bg-[#50577A] p-8">
                                 <div className="inline-grid md:mr-8 ">
                                     <a href="/">
-                                        <img src="https://preview.colorlib.com/theme/magdesign/images/post_lg_2.jpg" alt="Img" className="rounded-xl shadow-xl" />
+                                        <img src="https://preview.colorlib.com/theme/magdesign/images/post_lg_2.jpg" alt="Img" className="rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
                                     </a>
                                 </div>
                                 <div className="self-center text-[14px] inline-grid ">
@@ -100,7 +100,7 @@ const Trending = () => {
                             <div className="grid md:grid-flow-col dark:bg-[#50577A] p-8">
                                 <div className="inline-grid md:mr-8 ">
                                     <a href="/">
-                                        <img src="https://preview.colorlib.com/theme/magdesign/images/post_lg_2.jpg" alt="Img" className="rounded-xl shadow-xl" />
+                                        <img src="https://preview.colorlib.com/theme/magdesign/images/post_lg_2.jpg" alt="Img" className="rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
                                     </a>
                                 </div>
                                 <div className="self-center text-[14px] inline-grid ">

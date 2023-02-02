@@ -64,3 +64,15 @@ a:hover{
 .swiper-pagination-bullet-active{
   background: #F79918 !important;
 }
+
+.sectionCover{
+  background-image: url('https://images.unsplash.com/photo-1519552928909-67ca7aef9265?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1932&q=80');
+}
+
+.sectionCover_dark{
+  background-image: url('https://images.unsplash.com/photo-1504194782011-e78a3bf9d300?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80') !important;
+}
+
+.s{
+  transform: translateZ(0px);
+}

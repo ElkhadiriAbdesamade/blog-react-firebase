@@ -56,7 +56,8 @@ const SignIn = () => {
 
     }
     useEffect(() => {
-        if (sessionStorage.getItem('email') !== "") {
+        console.log(sessionStorage.getItem('email'));
+        if (sessionStorage.getItem('email') !== null && sessionStorage.getItem('email') !== "") {
             navigate('/');
         }
     }, [navigate])

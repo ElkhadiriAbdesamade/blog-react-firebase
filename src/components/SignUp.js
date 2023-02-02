@@ -76,7 +76,7 @@ const SignUp = () => {
             });
     }
     useEffect(() => {
-        if (sessionStorage.getItem('email')!=="") {
+        if (sessionStorage.getItem('email') !== null && sessionStorage.getItem('email') !== "") {
             navigate('/');
         }
         get_Countries()

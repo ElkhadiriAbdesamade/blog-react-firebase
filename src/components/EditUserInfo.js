@@ -5,6 +5,9 @@ import {
     ref,
     uploadBytes,
 } from "firebase/storage";
+import ErrorAlert from "./ErrorAlert";
+import SuccessAlert from "./SuccessAlert";
+import Loading from "./Loading";
 
 const EditUserInfo = ({ user }) => {
     const usersCollectionRef = collection(db, "users");
@@ -23,6 +26,14 @@ const EditUserInfo = ({ user }) => {
     const [err, setErr] = useState('');
     const [suc, setSuc] = useState('');
     const [countries, setCountries] = useState([])
+    const [load, setLoad] = useState(false);
+    const changeErrAlert = () => {
+        setErr('')
+    }
+    const changeSucAlert = () => {
+        setSuc('')
+    }
+
     const get_Countries = () => {
         fetch('country.json'
             , {
@@ -41,35 +52,46 @@ const EditUserInfo = ({ user }) => {
     }
 
     const updatePersonalInfo = async () => {
+        console.log(imageUpload.size);
+        setErr('')
+        setLoad(true);
         if (firstName === '' || lastName === '' || country === '' || bio === '') {
             setErr('Please Fill All Your Info !!');
             return;
         }
         if (imageUpload !== null) {
-            alert('image')
+            if (imageUpload.size > 2097152) {
+                setErr('Please choose Image With size Less then 2MB !!');
+                setSuc('');
+                setLoad(false);
+                return;
+            }
+            //alert('image')
+            console.log(imageUpload);
             const imageRef = ref(storage, `images/${user.id}`);
             await uploadBytes(imageRef, imageUpload).then(() => {
-                alert('image uploaded')
-            }
-
-            ).catch((error) => {
+                //alert('image uploaded')
+            }).catch((error) => {
                 // A full list of error codes is available at
                 // https://firebase.google.com/docs/storage/web/handle-errors
                 switch (error.code) {
                     case 'storage/unauthorized':
                         // User doesn't have permission to access the object
-                        console.log('User doesnt have permission to access the object');
+                        setErr('User doesnt have permission to access the object');
+                        setSuc('');
+                        setLoad(false);
                         break;
                     case 'storage/canceled':
                         // User canceled the upload
-                        console.log('User canceled the upload');
+                        setErr('User canceled the upload');
+                        setSuc('');
+                        setLoad(false);
                         break;
-
-                    // ...
-
                     case 'storage/unknown':
                         // Unknown error occurred, inspect error.serverResponse
-                        console.log('Unknown error occurred, inspect error.serverResponse');
+                        setErr('Unknown error occurred, inspect error.serverResponse');
+                        setSuc('');
+                        setLoad(false);
                         break;
                 }
             });
@@ -80,6 +102,7 @@ const EditUserInfo = ({ user }) => {
         await updateDoc(userDoc, newFields)
         setSuc('Info updated successfully');
         setErr('');
+        setLoad(false);
         window.location.replace('/myProfile')
     };
 
@@ -94,24 +117,15 @@ const EditUserInfo = ({ user }) => {
 
     return (
         <div>
-            {err && <div className="text-center pt-4 lg:px-4">
-                <div className="p-2 bg-red-500 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">
-                    <span className="flex rounded-full bg-red-700 uppercase px-2 py-1 text-xs font-bold mr-3">Error</span>
-                    <span className="font-semibold mr-2 text-left flex-auto">{err}</span>
-                    <svg className="fill-current h-6 w-6 text-red-700" role="button" xmlns="http://www.w3.org/2000/svg" onClick={() => setErr('')} viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
-                </div>
-            </div>}
-            {suc && <div className="text-center pt-4 lg:px-4">
-                <div className="p-2 bg-green-500 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">
-                    <span className="flex rounded-full bg-green-700 uppercase px-2 py-1 text-xs font-bold mr-3">Success</span>
-                    <span className="font-semibold mr-2 text-left flex-auto">{suc}</span>
-                    <svg className="fill-current h-6 w-6 text-green-700" role="button" xmlns="http://www.w3.org/2000/svg" onClick={() => setSuc('')} viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
-                </div>
-            </div>}
             <h1 className="text-5xl font-bold text-center">Edit Profile</h1>
             <div className="md:w-8/12 lg:ml-20 mx-auto">
                 <div className="mt-10 py-4 border-t border-blueGray-200 text-center">
                     <h1 className="text-2xl font-bold text-left mb-4">Personnel Info</h1>
+                    <div>
+                        {err && <ErrorAlert msg={err} setErr={changeErrAlert} />}
+                        {suc && <SuccessAlert msg={suc} setSuc={changeSucAlert} />}
+                        {load && <Loading />}
+                    </div>
                     <div className="flex items-center flex-col">
                         <div className="mb-6 flex gap-2 w-full">
                             <input
@@ -148,7 +162,7 @@ const EditUserInfo = ({ user }) => {
                             </textarea>
                         </div>
                         <div className="mb-6 w-full">
-                            <input type='file' className="form-control w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                            <input type='file' accept="image/*" className="form-control w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
 
                                 onChange={(event) => { setImageUpload(event.target.files[0]) }} />
 

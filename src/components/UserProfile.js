@@ -12,9 +12,10 @@ import {
 const UserProfile = ({ darkMode }) => {
 
     const imagesListRef = ref(storage, "images/");
+    const [imageUrl, setImageUrl] = useState('');
     const [user, setUser] = useState();
     const [edit, setEdit] = useState(false);
-    const [imageUrl, setImageUrl] = useState('');
+
 
     useEffect(() => {
         let email = sessionStorage.getItem("email")
@@ -25,22 +26,22 @@ const UserProfile = ({ darkMode }) => {
 
                 const q = query(usersCollectionRef, where("email", "==", email));
                 const data = await getDocs(q);
-                var u=data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0];
+                var u = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0];
                 setUser(u);
                 listAll(imagesListRef).then((response) => {
                     response.items.forEach((item) => {
-                        if (item.name === u.id) {                            
+                        if (item.name === u.id) {
                             getDownloadURL(item).then((url) => {
                                 setImageUrl(url);
                             });
                         }
                     });
-    
+
                 });
             };
             getUser();
         }
-       
+
     }, []);
 
     return (
@@ -64,14 +65,17 @@ const UserProfile = ({ darkMode }) => {
                         <div className="px-6">
                             <div className="flex flex-wrap justify-center">
                                 <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
-                                    <div className="relative scale-150">
+                                    { <div className="relative scale-[250%] md:scale-150">
                                         {!imageUrl ? <img alt="..." src={user && `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName}"&backgroundColor=F79918`}
                                             className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px" />
                                             :
                                             <img alt="..." src={imageUrl && `${imageUrl}`}
-                                                className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px" />
+                                                className="img shadow-xl align-middle border-none" />
                                         }
-                                    </div>
+                                    </div> }
+                                    {/* <div className="img_holder">
+                                       
+                                    </div> */}
                                 </div>
                                 <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
                                     <div className="py-6 px-3 lg:mt-0 mt-32  md:mt-32 sm:mt-32 text-center">

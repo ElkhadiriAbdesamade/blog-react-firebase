@@ -2,13 +2,21 @@ import { useEffect, useState } from 'react';
 import { FiMenu } from 'react-icons/fi'
 import { IoIosClose } from 'react-icons/io'
 import { BsMoonStarsFill, BsFillSunFill } from 'react-icons/bs'
+import { HiViewGrid, HiLogout } from 'react-icons/hi'
 import { Link } from 'react-router-dom'
-import { auth } from '../firebase-config';
+import { auth, storage } from '../firebase-config';
 import { signOut } from "firebase/auth";
-const Navbar = ({ darkMode, setDarkMode, role }) => {
+import { Button, Dropdown } from 'flowbite-react';
+import { getDownloadURL, listAll, ref } from 'firebase/storage';
+
+const Navbar = ({ darkMode, setDarkMode, user }) => {
+
+
+    const imagesListRef = ref(storage, "images/");
+    const [imageUrl, setImageUrl] = useState('');
 
     const [showNav, setShowNav] = useState(false);
-    const [email, setEmail] = useState('');
+    //const [email, setEmail] = useState('');
 
     const toggelNav = () => {
         setShowNav(!showNav);
@@ -27,9 +35,19 @@ const Navbar = ({ darkMode, setDarkMode, role }) => {
 
     }
     useEffect(() => {
-        setEmail(sessionStorage.getItem('email'))
+        listAll(imagesListRef).then((response) => {
+            response.items.forEach((item) => {
+                if (item.name === user.id) {
+                    getDownloadURL(item).then((url) => {
+                        setImageUrl(url);
+                    });
+                }
+            });
+
+        });
+
         setYear(new Date().getFullYear());
-    }, [])
+    }, [user])
 
     return (
         <nav className="py-3 dark:bg-[#404258] border-b-[1px] dark:border-[#50577A] shadow-xl dark:shadow-xl dark:shadow-slate-500 dark:text-white">
@@ -41,7 +59,7 @@ const Navbar = ({ darkMode, setDarkMode, role }) => {
                     <div className="row">
                         <div className="col-md-6 text-center order-1 order-md-2 mb-3 mb-md-0">
                             <a href="/" className="text-3xl text-black dark:text-white font-bold  relative m-0 uppercase decoration-transparent">Blog Page</a>
-                            {role}
+                            {user && user.role}
                         </div>
                         <div className="order-3 col-md-3 order-md-1">
                             <div className="input-group rounded">
@@ -54,9 +72,74 @@ const Navbar = ({ darkMode, setDarkMode, role }) => {
                         <div className="col-md-3 text-end order-2 order-md-3 mb-3 mb-md-0">
                             <div className="flex items-center">
                                 <ul className="list-unstyled relative m-0 me-auto flex items-center">
-                                    {!email && <li><a href="/sign_in" className="dark:text-white inline-block px-[10px] py-[5px]"><span className=""><i className="fa-solid fa-right-to-bracket"></i></span></a></li>}
-                                    {!email && <li><a href="/sign_up" className="dark:text-white inline-block px-[10px] py-[5px]"><span className=""><i className="fa-solid fa-user-plus"></i></span></a></li>}
-                                    {email && <li><button onClick={() => logOut()} className="dark:text-white inline-block px-[10px] py-[5px]"><span className=""><i className="fa-solid fa-right-from-bracket mr-1"></i></span>LogOut</button></li>}
+                                    {!user && <li>
+                                        <Button gradientMonochrome="info" className='mr-4'>
+                                            <a href="/sign_in" className="dark:text-white inline-block"><span className=""><i className="fa-solid fa-right-to-bracket mr-1"></i></span>SignIn</a>
+                                        </Button>
+                                    </li>}
+                                    {!user && <li>
+                                        <Button gradientMonochrome="cyan">
+                                            <a href="/sign_up" className="dark:text-white inline-block "><span className=""><i className="fa-solid fa-user-plus mr-1"></i></span>SignUp</a>
+                                        </Button>
+                                    </li>}
+                                    {user &&
+                                        // <li>
+                                        //     <div className="btn-group ">
+                                        //         <a className="nav-link dropdown-toggle dark:text-white text-md font-bold cursor-pointer pl-0" href="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        //             <i className="fa-solid fa-list-dropdown mr-4"></i>
+                                        //             Menu                                               
+                                        //         </a>
+                                        //         <ul className="dropdown-menu w-full" aria-labelledby="navbarDropdown">
+                                        //             <li className='inline-block px-[10px] py-[5px]'>Welcome <strong>{user && user.user_name}</strong></li>
+                                        //             <hr />
+                                        //             <li>
+                                        //                 <a className='hover:text-gray-400 inline-block px-[10px] py-[5px] font-bold' href="/myProfile">
+                                        //                     <i className="fa-solid fa-address-card mr-1"></i>
+                                        //                     My Profile</a>
+                                        //             </li>style
+                                        //             <hr />
+                                        //             <li><button onClick={() => logOut()} className="hover:text-gray-400 inline-block px-[10px] py-[5px] font-bold"><span className=""><i className="fa-solid fa-right-from-bracket mr-1"></i></span>LogOut</button></li>
+
+                                        //         </ul>
+                                        //     </div>
+                                        // </li>
+                                        <div>
+                                            <Dropdown label="Menu" className={darkMode ? 'bg' : 'bg_l'}>
+                                                <Dropdown.Header>
+                                                    <div className='flex items-center'>
+                                                        {/* {!imageUrl ? <img alt="..." src={user && `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName}"&backgroundColor=F79918`}
+                                                            className="w-8 h-8 mr-2 rounded-full" />
+                                                            :
+                                                            <img alt="..." src={imageUrl && `${imageUrl}`}
+                                                                className="w-8 h-8 mr-2 rounded-full" />
+                                                        } */}
+
+                                                        <span className="block text-sm  text-left ">
+                                                            {user.firstName} {user.lastName}
+                                                        </span>
+                                                     
+                                                    </div>
+
+                                                    <span className="block text-sm font-medium truncate  text-left">
+                                                        {user.email}
+                                                    </span>
+                                                </Dropdown.Header>
+                                                <Dropdown.Item icon={HiViewGrid} >
+                                                    <a href="/myProfile" >Profile</a>
+                                                </Dropdown.Item>
+                                                {/* <Dropdown.Item icon={HiCog}>
+                                                    Settings
+                                                </Dropdown.Item>
+                                                <Dropdown.Item icon={HiCurrencyDollar}>
+                                                    Earnings
+                                                </Dropdown.Item>
+                                                <Dropdown.Divider /> */}
+                                                <Dropdown.Item icon={HiLogout} onClick={() => logOut()} >
+                                                    Sign out
+                                                </Dropdown.Item>
+                                            </Dropdown>
+                                        </div>
+                                    }
 
 
                                 </ul>
@@ -77,16 +160,16 @@ const Navbar = ({ darkMode, setDarkMode, role }) => {
                 <div className='pt-2'>
                     <ul className='flex flex-col gap-10 '>
                         <li className='text-2xl font-bold cursor-pointer'><Link className='hover:text-gray-400' to="/" onClick={toggelNav}>
-                        <i className="fa-solid fa-home mr-4"></i>
+                            <i className="fa-solid fa-home mr-4"></i>
                             Home</Link></li>
-                             {email &&<li className='text-2xl font-bold cursor-pointer'>
+                        {user && <li className='text-2xl font-bold cursor-pointer'>
                             <Link className='hover:text-gray-400' to="/myProfile" onClick={toggelNav}>
                                 <i className="fa-solid fa-address-card mr-4"></i>
                                 My Profile</Link></li>
                         }
                         <div className="btn-group ">
                             <a className="nav-link dropdown-toggle text-white text-2xl font-bold cursor-pointer pl-0" href="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i className="fa-solid fa-list-dropdown mr-4"></i>
+                                <i className="fa-solid fa-list-dropdown mr-4"></i>
                                 Categories
                             </a>
                             <ul className="dropdown-menu w-full" aria-labelledby="navbarDropdown">
@@ -96,14 +179,14 @@ const Navbar = ({ darkMode, setDarkMode, role }) => {
                                 <li><a className="dropdown-item" href="/">Business</a></li>
                             </ul>
                         </div>
-                        {!email && <li className='text-2xl font-bold cursor-pointer '>
+                        {!user && <li className='text-2xl font-bold cursor-pointer '>
                             <Link onClick={toggelNav} className='hover:text-gray-400' to="/sign_in">Sign In</Link>
                         </li>}
-                        {!email && <li className='text-2xl font-bold cursor-pointer'>
+                        {!user && <li className='text-2xl font-bold cursor-pointer'>
                             <Link onClick={toggelNav} className='hover:text-gray-400' to="/sign_up">Sign Up</Link>
                         </li>}
-                       
-                        {email &&
+
+                        {user &&
                             <button onClick={() => logOut()} className='hover:text-gray-400 text-2xl font-bold'>Log Out</button>
                         }
                         <div className='absolute bottom-0 right-0 m-2'>
@@ -112,10 +195,7 @@ const Navbar = ({ darkMode, setDarkMode, role }) => {
                                     <a href="https://abdo-dev.vercel.app" rel="noreferrer" target="_blank" className='text-[#F79918] hover:scale-125 ease-in-out duration-500 hover:text-gray-400'>ABDO_DEV</a>
                                 </p>
                             </div>
-                            <div className="mb-8 text-center">
-                                <a href="/" className="m-2 hover:text-gray-400">Terms &amp; Conditions</a>/&nbsp;
-                                <a href="/" className="m-2 hover:text-gray-400">Privacy Policy</a>
-                            </div>
+
                         </div>
                     </ul>
                 </div>

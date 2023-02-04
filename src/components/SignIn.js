@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 
 import { auth } from '../firebase-config';
 import { useNavigate } from "react-router-dom";
+import ErrorAlert from "./ErrorAlert";
+import SuccessAlert from "./SuccessAlert";
+import Loading from "./Loading";
 
 
 const SignIn = () => {
@@ -12,16 +15,27 @@ const SignIn = () => {
     const [psw, setPsw] = useState('');
     const [err, setErr] = useState('');
     const [suc, setSuc] = useState('');
+    const [load, setLoad] = useState(false);
+    const changeErrAlert = () => {
+        setErr('')
+    }
+    const changeSucAlert = () => {
+        setSuc('')
+    }
     const navigate = useNavigate();
     const handleResetPsw = () => {
-        if (email==="") {
+        setLoad(true);
+        setErr('');
+        if (email === "") {
             setErr('Please give an Email Address !!');
+            setLoad(false);
             return;
         }
         sendPasswordResetEmail(auth, email)
             .then(() => {
                 setErr('');
                 setSuc('Password reset email sent!');
+                setLoad(false);
                 // Password reset email sent!
                 // ..
             })
@@ -30,11 +44,15 @@ const SignIn = () => {
                 //const errorMessage = error.message;
                 setErr(errorCode)
                 setSuc('');
+                setLoad(false);
             });
     }
     const handleSignIn = () => {
-        if (email==="" || psw==="") {
+        setLoad(true);
+        setErr('');
+        if (email === "" || psw === "") {
             setSuc('');
+            setLoad(false);
             setErr('Please Fill In Email and password !!');
             return;
         }
@@ -44,7 +62,7 @@ const SignIn = () => {
                 const user = userCredential.user;
                 console.log(user);
                 sessionStorage.setItem('email', email)
-                window.location.replace('/')
+                window.location.replace('/');
                 // ...
             })
             .catch((error) => {
@@ -52,6 +70,7 @@ const SignIn = () => {
                 //const errorMessage = error.message;
                 setErr(errorCode);
                 setSuc('');
+                setLoad(false);
             });
 
     }
@@ -60,6 +79,22 @@ const SignIn = () => {
         if (sessionStorage.getItem('email') !== null && sessionStorage.getItem('email') !== "") {
             navigate('/');
         }
+        const keyDownHandler = event => {
+            console.log('User pressed: ', event.key);
+      
+            if (event.key === 'Enter') {
+              event.preventDefault();
+      
+              // 👇️ your logic here
+              handleSignIn();
+            }
+          };
+      
+          document.addEventListener('keydown', keyDownHandler);
+      
+          return () => {
+            document.removeEventListener('keydown', keyDownHandler);
+          };
     }, [navigate])
     return (
 
@@ -67,20 +102,7 @@ const SignIn = () => {
 
             <div className="container px-6 py-12 h-full">
                 <h1 className="text-5xl font-bold text-center">Sign In</h1>
-                {err && <div className="text-center pt-4 lg:px-4">
-                    <div className="p-2 bg-red-500 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">
-                        <span className="flex rounded-full bg-red-700 uppercase px-2 py-1 text-xs font-bold mr-3">Error</span>
-                        <span className="font-semibold mr-2 text-left flex-auto">{err}</span>
-                        <svg className="fill-current h-6 w-6 text-red-700" role="button" xmlns="http://www.w3.org/2000/svg" onClick={()=>setErr('')} viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-                    </div>
-                </div>}
-                {suc && <div className="text-center pt-4 lg:px-4">
-                    <div className="p-2 bg-green-500 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">
-                        <span className="flex rounded-full bg-green-700 uppercase px-2 py-1 text-xs font-bold mr-3">Success</span>
-                        <span className="font-semibold mr-2 text-left flex-auto">{suc}</span>
-                        <svg className="fill-current h-6 w-6 text-green-700" role="button" xmlns="http://www.w3.org/2000/svg" onClick={()=>setSuc('')} viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-                    </div>
-                </div>}
+
                 <div className="flex justify-center items-center flex-wrap mt-20 g-6 text-gray-800">
                     <div className="md:w-8/12 lg:w-6/12 mb-12 md:mb-0">
                         <img
@@ -90,6 +112,12 @@ const SignIn = () => {
                         />
                     </div>
                     <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
+                        <div>
+                            {err && <ErrorAlert msg={err} setErr={changeErrAlert} />}
+                            {suc && <SuccessAlert msg={suc} setSuc={changeSucAlert} />}
+                            {load && <Loading />}
+                        </div>
+
                         <div className="flex items-center flex-col">
 
                             <div className="mb-6 w-full">

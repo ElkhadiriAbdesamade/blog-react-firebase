@@ -11,7 +11,7 @@ const Post = () => {
                     <div className="grid  p-1 rounded-xl">
                         <div className="mb-4">
                             <a href="/">
-                                <img src="https://preview.colorlib.com/theme/magdesign/images/img_2.jpg" alt="Img" className="rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
+                                <img src="https://preview.colorlib.com/theme/magdesign/images/img_2.jpg" alt="Img" className="rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500 hover:scale-110 ease-in-out duration-700" />
                             </a>
                         </div>
                         <div className="self-center text-[14px]">

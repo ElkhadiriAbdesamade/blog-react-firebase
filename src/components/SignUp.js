@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
-import {createUserWithEmailAndPassword } from "firebase/auth";
-import { collection,addDoc } from '@firebase/firestore'
-import {auth,db} from '../firebase-config';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, addDoc, getDocs, query, where } from '@firebase/firestore'
+import { auth, db } from '../firebase-config';
 import { useNavigate } from "react-router-dom";
+import ErrorAlert from "./ErrorAlert";
+import SuccessAlert from "./SuccessAlert";
+import Loading from "./Loading";
+
+
 
 const SignUp = () => {
 
@@ -10,51 +15,82 @@ const SignUp = () => {
     const [email, setEmail] = useState('')
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
+    const [userName, setUserName] = useState('')
     const [country, setCountry] = useState('')
     const [psw, setPsw] = useState('');
     const [pswConfirmation, setPswConfirmation] = useState('');
     const [err, setErr] = useState('');
     const [suc, setSuc] = useState('');
+    const [load, setLoad] = useState(false);
+    const changeErrAlert = () => {
+        setErr('')
+    }
+    const changeSucAlert = () => {
+        setSuc('')
+    }
     const navigate = useNavigate();
     const usersCollectionRef = collection(db, "users");
-    let user={email: email ,firstName:firstName,lastName:lastName,country:country,bio:'',role:"user"}
+    let user = { email: email, firstName: firstName, lastName: lastName, country: country,user_name:userName, bio: '', role: "user" }
     const addUser = async () => {
         await addDoc(usersCollectionRef, user);
-      };
-    const handleSignUp = ()=>{
-        
-        if (user.email===""||user.firstName===""||user.lastName===""||user.country===""||user.email===""||psw===""||pswConfirmation==="") {
+    };
+
+    
+   
+    const handleSignUp = async () => {
+        setLoad(true);
+        setErr('');
+        if (user.email === "" || user.firstName === "" || user.lastName === "" ||user.user_name === "" || user.country === "" || user.email === "" || psw === "" || pswConfirmation === "") {
             setSuc('');
             setErr('Please Fill In All your information !!');
+            setLoad(false);
             return;
         }
-        if (psw!==pswConfirmation) {
+        if (psw !== pswConfirmation) {
             setSuc('');
+            setLoad(false);
             setErr('password and password Confirmation dont match !!');
             return;
         }
-        createUserWithEmailAndPassword(auth, email, psw)
-        .then((userCredential) => {
-            // Signed in 
-            
-            const user = userCredential.user;
-            addUser();
-            console.log(user);
-            setSuc('Signed in ');
-            setErr('');
-            sessionStorage.setItem('email', email)
-            window.location.replace('/')
-            // ...
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode+'/'+errorMessage);
+
+         //Check if user_Name Exist
+        const q = query(usersCollectionRef, where("user_name", "==", userName));
+        const data = await getDocs(q);
+        const userN=data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0]
+        console.log(userN);
+        if (userN !== undefined) {
             setSuc('');
-            setErr(error.code);
-            // ..
-        });
+            setLoad(false);
+            setErr('User Name already Exist !!');
+            return;
+        }
+
+        createUserWithEmailAndPassword(auth, email, psw)
+            .then((userCredential) => {
+                // Signed in 
+
+                const user = userCredential.user;
+                addUser();
+                console.log(user);
+                setSuc('Signed in ');
+                setErr('');
+                setLoad(false);
+                sessionStorage.setItem('email', email)
+                window.location.replace('/')
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode + '/' + errorMessage);
+                setSuc('');
+                setLoad(false);
+                setErr(error.code);
+                // ..
+            });
         console.log(user);
+
+       
 
     }
 
@@ -86,20 +122,7 @@ const SignUp = () => {
 
             <div className="container px-6 py-12 h-full">
                 <h1 className="text-5xl font-bold text-center">Sign Up</h1>
-                {err && <div className="text-center pt-4 lg:px-4">
-                    <div className="p-2 bg-red-500 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">
-                        <span className="flex rounded-full bg-red-700 uppercase px-2 py-1 text-xs font-bold mr-3">Error</span>
-                        <span className="font-semibold mr-2 text-left flex-auto">{err}</span>
-                        <svg className="fill-current h-6 w-6 text-red-700" role="button" xmlns="http://www.w3.org/2000/svg" onClick={()=>setErr('')} viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-                    </div>
-                </div>}
-                {suc && <div className="text-center pt-4 lg:px-4">
-                    <div className="p-2 bg-green-500 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">
-                        <span className="flex rounded-full bg-green-700 uppercase px-2 py-1 text-xs font-bold mr-3">Success</span>
-                        <span className="font-semibold mr-2 text-left flex-auto">{suc}</span>
-                        <svg className="fill-current h-6 w-6 text-green-700" role="button" xmlns="http://www.w3.org/2000/svg" onClick={()=>setSuc('')} viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-                    </div>
-                </div>}
+
                 <div className="flex justify-center items-center flex-wrap mt-20 g-6 text-gray-800">
                     <div className="md:w-8/12 lg:w-6/12 mb-12 md:mb-0">
                         <img
@@ -109,6 +132,11 @@ const SignUp = () => {
                         />
                     </div>
                     <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
+                        <div>
+                            {err && <ErrorAlert msg={err} setErr={changeErrAlert} />}
+                            {suc && <SuccessAlert msg={suc} setSuc={changeSucAlert} />}
+                            {load && <Loading />}
+                        </div>
                         <div className="flex items-center flex-col">
 
                             <div className="mb-6 flex gap-2 w-full">
@@ -127,16 +155,24 @@ const SignUp = () => {
                             </div>
                             <div className="mb-6 w-full">
                                 <input
-                                    type="text"
+                                    type="email"
                                     className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                     placeholder="Email address"
                                     onChange={(event) => { setEmail(event.target.value) }}
                                 />
                             </div>
+                            <div className="mb-6 w-full">
+                                <input
+                                    type="text"
+                                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                                    placeholder="User Name"
+                                    onChange={(event) => { setUserName(event.target.value) }}
+                                />
+                            </div>
 
                             <div className="mb-6 w-full">
                                 <select id="countries" className="bg-gray-50 border border-gray-300 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                onChange={(event) => { setCountry(event.target.value) }}>
+                                    onChange={(event) => { setCountry(event.target.value) }}>
                                     <option defaultValue>choose your country</option>
                                     {countries.map((count) => {
                                         return <option key={count.name} value={count.name}>{count.name}
@@ -169,7 +205,7 @@ const SignUp = () => {
                                 className="inline-block px-7 py-3 bg-[#F79918] text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-[#F79950] hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0  active:shadow-lg transition duration-150 ease-in-out w-full"
                                 data-mdb-ripple="true"
                                 data-mdb-ripple-color="light"
-                                onClick={()=>{handleSignUp()}}>
+                                onClick={() => { handleSignUp() }}>
                                 Sign Up
                             </button>
 

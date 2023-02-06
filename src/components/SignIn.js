@@ -80,8 +80,6 @@ const SignIn = () => {
             navigate('/');
         }
         const keyDownHandler = event => {
-            console.log('User pressed: ', event.key);
-      
             if (event.key === 'Enter') {
               event.preventDefault();
       
@@ -95,7 +93,7 @@ const SignIn = () => {
           return () => {
             document.removeEventListener('keydown', keyDownHandler);
           };
-    }, [navigate])
+    }, [navigate,psw])
     return (
 
         <section className="md:h-screen">

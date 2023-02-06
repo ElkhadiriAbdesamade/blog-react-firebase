@@ -64,19 +64,17 @@ const SignUp = () => {
             setErr('User Name already Exist !!');
             return;
         }
-
+        addUser();
         createUserWithEmailAndPassword(auth, email, psw)
             .then((userCredential) => {
                 // Signed in 
-
                 const user = userCredential.user;
-                addUser();
                 console.log(user);
                 setSuc('Signed in ');
                 setErr('');
                 setLoad(false);
                 sessionStorage.setItem('email', email)
-                window.location.replace('/')
+                window.location.replace('/sign_in')
                 // ...
             })
             .catch((error) => {

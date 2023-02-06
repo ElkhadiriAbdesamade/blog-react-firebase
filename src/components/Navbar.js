@@ -73,13 +73,13 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                             <div className="flex items-center">
                                 <ul className="list-unstyled relative m-0 me-auto flex items-center">
                                     {!user && <li>
-                                        <Button gradientMonochrome="info" className='mr-4'>
-                                            <a href="/sign_in" className="dark:text-white inline-block"><span className=""><i className="fa-solid fa-right-to-bracket mr-1"></i></span>SignIn</a>
+                                        <Button href='/sign_in' gradientMonochrome="info" className='mr-4'>
+                                            <a className="dark:text-white inline-block"><span className=""><i className="fa-solid fa-right-to-bracket mr-1"></i></span>SignIn</a>
                                         </Button>
                                     </li>}
                                     {!user && <li>
-                                        <Button gradientMonochrome="cyan">
-                                            <a href="/sign_up" className="dark:text-white inline-block "><span className=""><i className="fa-solid fa-user-plus mr-1"></i></span>SignUp</a>
+                                        <Button href="/sign_up" gradientMonochrome="cyan">
+                                            <a  className="dark:text-white inline-block "><span className=""><i className="fa-solid fa-user-plus mr-1"></i></span>SignUp</a>
                                         </Button>
                                     </li>}
                                     {user &&

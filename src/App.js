@@ -48,6 +48,7 @@ function App() {
     }
     
     // setRole(localStorage.getItem('role'));
+  
   }, []);
   return (
     <div className={darkMode ? 'dark text-white ease-in-out duration-1000 ' : 'ease-in-out duration-1000 '}>

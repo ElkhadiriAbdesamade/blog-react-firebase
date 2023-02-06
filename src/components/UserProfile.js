@@ -8,6 +8,7 @@ import {
     getDownloadURL,
     listAll,
 } from "firebase/storage";
+import { Button } from 'react-scroll';
 
 const UserProfile = ({ darkMode }) => {
 
@@ -59,20 +60,23 @@ const UserProfile = ({ darkMode }) => {
                     </svg>
                 </div>
             </section>
+            
             <section className="relative py-16   dark:bg-[#474E68]">
                 <div className="container mx-auto px-4 ">
                     <div className="bg-slate-50 relative flex flex-col min-w-0 break-words dark:bg-[#6B728E] w-full mb-6 shadow-xl rounded-lg -mt-64">
                         <div className="px-6">
-                            <div className="flex flex-wrap justify-center">
+                            <div className="flex flex-wrap items-center gap-4 justify-center">
                                 <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
-                                    { <div className="relative scale-[250%] md:scale-150">
+                                    {<div className="relative scale-[150%] md:scale-150">
                                         {!imageUrl ? <img alt="..." src={user && `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName}"&backgroundColor=F79918`}
-                                            className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px" />
+                                            className="shadow-xl rounded-full  align-middle border-none absolute -m-16 -ml-20 lg:-ml-16  max-w-150-px" />
                                             :
                                             <img alt="..." src={imageUrl && `${imageUrl}`}
-                                                className="img shadow-xl align-middle border-none" />
+                                                className="img shadow-xl align-middle 
+                                                w-[100px] h-[100px] md:w-[200px] md:h-[200px] border-none" />
                                         }
-                                    </div> }
+                                    </div>}
+
                                     {/* <div className="img_holder">
                                        
                                     </div> */}
@@ -83,12 +87,12 @@ const UserProfile = ({ darkMode }) => {
                                             <i className="fa-solid fa-add mr-2"></i>
                                             Add Blog
                                         </button>
-                                        {!edit ? <button onClick={() => { setEdit(!edit) }} className="bg-[#F79918] active:bg-[#c47a12] uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
+                                        {!edit ? <button onClick={() => { setEdit(!edit) }} className="bg-[#F79918] active:bg-[#c47a12] uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 ml-4 mb-1 ease-linear transition-all duration-150" type="button">
                                             <i className="fa-solid fa-pen mr-2"></i>
                                             Edit Profile
                                         </button>
                                             :
-                                            <button onClick={() => { setEdit(!edit) }} className="bg-red-400 active:bg-red-700 uppercase text-white font-bold hover:shadow-md shadow text-xs px-3 py-2 rounded-full outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
+                                            <button onClick={() => { setEdit(!edit) }} className="bg-red-400 active:bg-red-700 uppercase text-white font-bold hover:shadow-md shadow text-xs px-3 py-2 rounded-full outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all ml-4 duration-150" type="button">
                                                 <i className="fa-solid fa-close scale-150"></i>
                                             </button>
                                         }
@@ -113,7 +117,7 @@ const UserProfile = ({ darkMode }) => {
                                     :
                                     <div>
                                         <div>
-                                            <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2 dark:text-[#fff]">
+                                            <h3 className="text-4xl font-semibold leading-normal text-blueGray-700 mb-2 dark:text-[#fff]">
                                                 {user && user.firstName} {user && user.lastName}
                                             </h3>
                                             <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase dark:text-[#fff]">

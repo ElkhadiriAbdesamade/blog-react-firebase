@@ -116,9 +116,9 @@ const SignUp = () => {
         get_Countries()
     }, [navigate])// eslint-disable-line react-hooks/exhaustive-deps
     return (
-        <section className="md:h-screen">
+        <section className="">
 
-            <div className="container px-6 py-12 h-full">
+            <div className="container px-6 py-12 lg:h-screen">
                 <h1 className="text-5xl font-bold text-center">Sign Up</h1>
 
                 <div className="flex justify-center items-center flex-wrap mt-20 g-6 text-gray-800">

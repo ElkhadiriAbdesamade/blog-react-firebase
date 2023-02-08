@@ -1,5 +1,6 @@
 const ErrorAlert = ({ msg ,setErr}) => {
     return (
+        
         <div>
             <div className="text-center pt-4 lg:px-4 mb-4">
                 <div className="p-2 bg-red-500 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">

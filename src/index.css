@@ -113,3 +113,7 @@ a:hover{
   width: 200px !important;
 }
 
+[x-cloak] {
+  display: none;
+}
+

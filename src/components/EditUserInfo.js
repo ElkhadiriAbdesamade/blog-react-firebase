@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, query, where } from '@firebase/firestore';
 import { db, storage, auth } from '../firebase-config';
 import {
+    getDownloadURL,
     ref,
     uploadBytes,
 } from "firebase/storage";
@@ -22,18 +23,35 @@ const EditUserInfo = ({ user }) => {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [bio, setBio] = useState('')
-    const [country, setCountry] = useState('')
+    const [country, setCountry] = useState('');
+    
     const [psw, setPsw] = useState('');
     const [confPsw, setConfPsw] = useState('');
-    const [err, setErr] = useState('');
-    const [suc, setSuc] = useState('');
+    //user Info
+    const [errProfile, setErrProfile] = useState('');
+    const [sucProfile, setSucProfile] = useState('');
+    const [loadProfile, setLoadProfile] = useState(false);
+    //email
+    const [errEmail, setErrEmail] = useState('');
+    const [sucEmail, setSucEmail] = useState('');
+    const [loadEmail, setLoadEmail] = useState(false);
+    //psw
+    const [errPsw, setErrPsw] = useState('');
+    const [sucPsw, setSucPsw] = useState('');
+    const [loadPsw, setLoadPsw] = useState(false);
+
+
     const [countries, setCountries] = useState([])
-    const [load, setLoad] = useState(false);
+    
     const changeErrAlert = () => {
-        setErr('')
+        setErrProfile('')
+        setErrEmail('')
+        setErrPsw('')
     }
     const changeSucAlert = () => {
-        setSuc('')
+        setSucProfile('')
+        setSucEmail('')
+        setSucPsw('')
     }
 
     const handleChangeImage = (e) => {
@@ -61,12 +79,12 @@ const EditUserInfo = ({ user }) => {
     }
 
     const update_Email = () => {
-        setErr('');
-        setSuc('');
-        setLoad(true);
+        setErrEmail('');
+        setSucEmail('');
+        setLoadEmail(true);
         if (email === "") {
-            setErr('Please Fill in your email !!');
-            setLoad(false);
+            setErrEmail('Please Fill in your email !!');
+            setLoadEmail(false);
             return;
         }
         const user = auth.currentUser;
@@ -74,36 +92,36 @@ const EditUserInfo = ({ user }) => {
         //reauthenticateWithCredential(auth.currentUser,auth)
         updateEmail(user, email).then(() => {
             // Profile updated!
-            setSuc('Email updated!');
-            setErr('');
-            setLoad(false);
+            setSucEmail('Email updated!');
+            setErrEmail('');
+            setLoadEmail(false);
             // ...
         }).catch((error) => {
             // An error occurred
             // ...
-            setSuc('');
-            setLoad(false);
+            setSucEmail('');
+            setLoadEmail(false);
             console.log(error);
-            setErr('erroe');
+            setErrEmail('Error');
 
         });
     }
 
     const update_psw = () => {
-        setErr('');
-        setSuc('');
-        setLoad(true);
+        setErrPsw('');
+        setSucPsw('');
+        setLoadPsw(true);
         if (psw === "" || confPsw === "") {
-            setSuc('');
-            setErr('Please Fill in the password !!');
-            setLoad(false);
+            setSucPsw('');
+            setErrPsw('Please Fill in the password !!');
+            setLoadPsw(false);
             return;
         }
 
         if (psw !== confPsw) {
-            setSuc('');
-            setLoad(false);
-            setErr('password and password Confirmation dont match !!');
+            setSucPsw('');
+            setLoadPsw(false);
+            setErrPsw("password and password Confirmation don`t match !!");
             return;
         }
 
@@ -112,73 +130,78 @@ const EditUserInfo = ({ user }) => {
         //reauthenticateWithCredential(auth.currentUser,auth)
         updatePassword(user, psw).then(() => {
             // Profile updated!
-            setSuc('Passwoed updated!');
-            setErr('');
-            setLoad(false);
+            setSucPsw('Password updated!');
+            setErrPsw('');
+            setLoadPsw(false);
             // ...
         }).catch((error) => {
             // An error occurred
             // ...
-            setSuc('');
-            setLoad(false);
+            setSucPsw('');
+            setLoadPsw(false);
             console.log(error);
-            setErr('erroe');
+            setErrPsw('error');
 
         });
     }
 
     const updatePersonalInfo = async () => {
-        setErr('')
-        setLoad(true);
+        setErrProfile('')
+        let coverUrl;
+        setLoadProfile(true);
         if (firstName === '' || lastName === '' || country === '' || bio === '') {
-            setErr('Please Fill All Your Info !!');
-            setLoad(false);
+            setErrProfile('Please Fill All Your Info !!');
+            setLoadProfile(false);
             return;
         }
         if (imageUpload !== null) {
             if (imageUpload.size > 2097152) {
-                setErr('Please choose Image With size Less then 2MB !!');
-                setSuc('');
-                setLoad(false);
+                setErrProfile('Please choose Image With size Less then 2MB !!');
+                setSucProfile('');
+                setLoadProfile(false);
                 return;
             }
             //alert('image')
             console.log(imageUpload);
-            const imageRef = ref(storage, `images/${user.id}`);
-            await uploadBytes(imageRef, imageUpload).then(() => {
-                //alert('image uploaded')
-            }).catch((error) => {
+            const imageRef = ref(storage, `images/usersCover/${user.id}`);
+            await uploadBytes(imageRef, imageUpload).then(snapshot => {
+                return getDownloadURL(snapshot.ref)
+              })
+              .then(downloadURL => {
+                coverUrl=downloadURL;
+                console.log('Download URL', downloadURL)
+              }).catch((error) => {
                 // A full list of error codes is available at
                 // https://firebase.google.com/docs/storage/web/handle-errors
                 switch (error.code) {
                     case 'storage/unauthorized':
                         // User doesn't have permission to access the object
-                        setErr('User doesnt have permission to access the object');
-                        setSuc('');
-                        setLoad(false);
+                        setErrProfile('User don`t have permission to access the object');
+                        setSucProfile('');
+                        setLoadProfile(false);
                         break;
                     case 'storage/canceled':
                         // User canceled the upload
-                        setErr('User canceled the upload');
-                        setSuc('');
-                        setLoad(false);
+                        setErrProfile('User canceled the upload');
+                        setSucProfile('');
+                        setLoadProfile(false);
                         break;
                     case 'storage/unknown':
                         // Unknown error occurred, inspect error.serverResponse
-                        setErr('Unknown error occurred, inspect error.serverResponse');
-                        setSuc('');
-                        setLoad(false);
+                        setErrProfile('Unknown error occurred, inspect error.serverResponse');
+                        setSucProfile('');
+                        setLoadProfile(false);
                         break;
                 }
             });
         }
 
         const userDoc = doc(db, "users", user.id);
-        const newFields = { firstName: firstName, lastName: lastName, country: country, bio: bio };
+        const newFields = { firstName: firstName, lastName: lastName,coverUrl:coverUrl, country: country, bio: bio };
         await updateDoc(userDoc, newFields)
-        setSuc('Info updated successfully');
-        setErr('');
-        setLoad(false);
+        setSucProfile('Info updated successfully');
+        setErrProfile('');
+        setLoadProfile(false);
         window.location.replace('/myProfile')
     };
 
@@ -192,15 +215,15 @@ const EditUserInfo = ({ user }) => {
     }, [])
 
     return (
-        <div>
+        <div className="mt-8">
             <h1 className="text-5xl font-bold text-center">Edit Profile</h1>
             <div className="md:w-8/12 lg:ml-20 mx-auto">
                 <div className="mt-10 py-4 border-t border-blueGray-200 text-center">
                     <h1 className="text-2xl font-bold text-left mb-4">Personnel Info</h1>
                     <div>
-                        {err && <ErrorAlert msg={err} setErr={changeErrAlert} />}
-                        {suc && <SuccessAlert msg={suc} setSuc={changeSucAlert} />}
-                        {load && <Loading />}
+                        {errProfile && <ErrorAlert msg={errProfile} setErr={changeErrAlert} />}
+                        {sucProfile && <SuccessAlert msg={sucProfile} setSuc={changeSucAlert} />}
+                        {loadProfile && <Loading />}
                     </div>
                     <div className="flex items-center flex-col">
                         <div className="mb-6 flex gap-2 w-full">
@@ -292,9 +315,9 @@ const EditUserInfo = ({ user }) => {
                     <div className="mt-10 py-4 border-t border-blueGray-200 text-center">
                         <h1 className="text-2xl font-bold text-left mb-4">Change Email Address</h1>
                         <div>
-                            {err && <ErrorAlert msg={err} setErr={changeErrAlert} />}
-                            {suc && <SuccessAlert msg={suc} setSuc={changeSucAlert} />}
-                            {load && <Loading />}
+                            {errEmail && <ErrorAlert msg={errEmail} setErr={changeErrAlert} />}
+                            {sucEmail && <SuccessAlert msg={sucEmail} setSuc={changeSucAlert} />}
+                            {loadEmail && <Loading />}
                         </div>
                         <div className="mb-6 w-full">
                             <input
@@ -313,9 +336,9 @@ const EditUserInfo = ({ user }) => {
                     <div className="mt-10 py-4 border-t border-blueGray-200 text-center">
                         <h1 className="text-2xl font-bold text-left mb-4">Change Password</h1>
                         <div>
-                            {err && <ErrorAlert msg={err} setErr={changeErrAlert} />}
-                            {suc && <SuccessAlert msg={suc} setSuc={changeSucAlert} />}
-                            {load && <Loading />}
+                            {errPsw && <ErrorAlert msg={errPsw} setErr={changeErrAlert} />}
+                            {sucPsw && <SuccessAlert msg={sucPsw} setSuc={changeSucAlert} />}
+                            {loadPsw && <Loading />}
                         </div>
                         <div className="mb-6 w-full">
                             <input

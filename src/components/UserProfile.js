@@ -9,39 +9,45 @@ import {
     listAll,
 } from "firebase/storage";
 import { Button } from 'react-scroll';
+import AddBlog from './blog/AddBlog';
 
-const UserProfile = ({ darkMode }) => {
+const UserProfile = ({ darkMode, user }) => {
 
-    const imagesListRef = ref(storage, "images/");
+    //const imagesListRef = ref(storage, "images/");
     const [imageUrl, setImageUrl] = useState('');
-    const [user, setUser] = useState();
+    //const [user, setUser] = useState();
     const [edit, setEdit] = useState(false);
+    const [addBlog, setAddBlog] = useState(false);
 
 
     useEffect(() => {
-        let email = sessionStorage.getItem("email")
+        setImageUrl(user.coverUrl)
+        console.log(user);
+        // let email = sessionStorage.getItem("email")
 
-        if (email !== "") {
-            const usersCollectionRef = collection(db, "users");
-            const getUser = async () => {
+        // if (email !== "") {
+        //     const usersCollectionRef = collection(db, "users");
+        //     const getUser = async () => {
 
-                const q = query(usersCollectionRef, where("email", "==", email));
-                const data = await getDocs(q);
-                var u = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0];
-                setUser(u);
-                listAll(imagesListRef).then((response) => {
-                    response.items.forEach((item) => {
-                        if (item.name === u.id) {
-                            getDownloadURL(item).then((url) => {
-                                setImageUrl(url);
-                            });
-                        }
-                    });
+        //         const q = query(usersCollectionRef, where("email", "==", email));
+        //         const data = await getDocs(q);
+        //         var u = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0];
+        //         setUser(u);
+        //         setImageUrl(u.coverUrl)
 
-                });
-            };
-            getUser();
-        }
+        //         // listAll(imagesListRef).then((response) => {
+        //         //     response.items.forEach((item) => {
+        //         //         if (item.name === u.id) {
+        //         //             getDownloadURL(item).then((url) => {
+        //         //                 setImageUrl(url);
+        //         //             });
+        //         //         }
+        //         //     });
+
+        //         // });
+        //     };
+        //     getUser();
+        // }
 
     }, []);
 
@@ -60,14 +66,14 @@ const UserProfile = ({ darkMode }) => {
                     </svg>
                 </div>
             </section>
-            
+
             <section className="relative py-16   dark:bg-[#474E68]">
                 <div className="container mx-auto px-4 ">
                     <div className="bg-slate-50 relative flex flex-col min-w-0 break-words dark:bg-[#6B728E] w-full mb-6 shadow-xl rounded-lg -mt-64">
                         <div className="px-6">
                             <div className="flex flex-wrap items-center gap-4 justify-center">
                                 <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
-                                    {<div className="relative scale-[150%] md:scale-150">
+                                    {<div className="relative scale-[180%] md:scale-[130%] lg:scale-150">
                                         {!imageUrl ? <img alt="..." src={user && `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName}"&backgroundColor=F79918`}
                                             className="shadow-xl rounded-full  align-middle border-none absolute -m-16 -ml-20 lg:-ml-16  max-w-150-px" />
                                             :
@@ -82,17 +88,23 @@ const UserProfile = ({ darkMode }) => {
                                     </div> */}
                                 </div>
                                 <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
-                                    <div className="py-6 px-3 lg:mt-0 mt-32  md:mt-32 sm:mt-32 text-center">
-                                        <button className="bg-green-500 active:bg-green-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
+                                    <div className="py-6 px-3 lg:mt-0 md:mt-8 mt-4 text-center">
+                                       
+                                        {!addBlog ? <button onClick={() => { setAddBlog(!addBlog);setEdit(false) }} className="bg-green-500 active:bg-green-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
                                             <i className="fa-solid fa-add mr-2"></i>
                                             Add Blog
                                         </button>
-                                        {!edit ? <button onClick={() => { setEdit(!edit) }} className="bg-[#F79918] active:bg-[#c47a12] uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 ml-4 mb-1 ease-linear transition-all duration-150" type="button">
+                                            :
+                                            <button onClick={() => { setAddBlog(false) }} className="bg-red-400 active:bg-red-700 uppercase text-white font-bold hover:shadow-md shadow text-xs px-3 py-2 rounded-full outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all ml-4 duration-150" type="button">
+                                                <i className="fa-solid fa-close scale-150"></i>
+                                            </button>
+                                        }
+                                        {!edit ? <button onClick={() => { setEdit(!edit);setAddBlog(false) }} className="bg-[#F79918] active:bg-[#c47a12] uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 ml-4 mb-1 ease-linear transition-all duration-150" type="button">
                                             <i className="fa-solid fa-pen mr-2"></i>
                                             Edit Profile
                                         </button>
                                             :
-                                            <button onClick={() => { setEdit(!edit) }} className="bg-red-400 active:bg-red-700 uppercase text-white font-bold hover:shadow-md shadow text-xs px-3 py-2 rounded-full outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all ml-4 duration-150" type="button">
+                                            <button onClick={() => { setEdit(false) }} className="bg-red-400 active:bg-red-700 uppercase text-white font-bold hover:shadow-md shadow text-xs px-3 py-2 rounded-full outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all ml-4 duration-150" type="button">
                                                 <i className="fa-solid fa-close scale-150"></i>
                                             </button>
                                         }
@@ -100,7 +112,7 @@ const UserProfile = ({ darkMode }) => {
                                     </div>
                                 </div>
                                 <div className="w-full lg:w-4/12 px-4 lg:order-1">
-                                    <div className="flex justify-center py-4 lg:pt-4 pt-8">
+                                    <div className="flex justify-center lg:py-4 lg:pt-4">
                                         <div className="mr-4 p-3 text-center">
                                             <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600 dark:text-[#fff]">22</span><span className="text-sm text-blueGray-400 dark:text-gray-300">Blogs</span>
                                         </div>
@@ -111,10 +123,10 @@ const UserProfile = ({ darkMode }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="text-center mt-12">
-
-                                {edit ? < EditUserInfo user={user} />
-                                    :
+                            <div className="text-center lg:mt-12">
+                                {addBlog && < AddBlog user={user} darkMode={darkMode} />}
+                                {edit && < EditUserInfo user={user} />}
+                                {!edit && !addBlog &&
                                     <div>
                                         <div>
                                             <h3 className="text-4xl font-semibold leading-normal text-blueGray-700 mb-2 dark:text-[#fff]">

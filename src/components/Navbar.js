@@ -8,6 +8,7 @@ import { auth, storage } from '../firebase-config';
 import { signOut } from "firebase/auth";
 import { Button, Dropdown } from 'flowbite-react';
 import { getDownloadURL, listAll, ref } from 'firebase/storage';
+import { useLocation } from 'react-router-dom'
 
 const Navbar = ({ darkMode, setDarkMode, user }) => {
 
@@ -23,7 +24,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
     }
 
     const [year, setYear] = useState('');
-
+    const location = useLocation();
     const logOut = () => {
 
         signOut(auth).then(() => {
@@ -45,6 +46,9 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
             });
 
         });
+
+
+        console.log(location.pathname);
 
         setYear(new Date().getFullYear());
     }, [user])
@@ -79,61 +83,28 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                                     </li>}
                                     {!user && <li>
                                         <Button href="/sign_up" gradientMonochrome="cyan">
-                                            <a  className="dark:text-white inline-block "><span className=""><i className="fa-solid fa-user-plus mr-1"></i></span>SignUp</a>
+                                            <a className="dark:text-white inline-block "><span className=""><i className="fa-solid fa-user-plus mr-1"></i></span>SignUp</a>
                                         </Button>
                                     </li>}
                                     {user &&
-                                        // <li>
-                                        //     <div className="btn-group ">
-                                        //         <a className="nav-link dropdown-toggle dark:text-white text-md font-bold cursor-pointer pl-0" href="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        //             <i className="fa-solid fa-list-dropdown mr-4"></i>
-                                        //             Menu                                               
-                                        //         </a>
-                                        //         <ul className="dropdown-menu w-full" aria-labelledby="navbarDropdown">
-                                        //             <li className='inline-block px-[10px] py-[5px]'>Welcome <strong>{user && user.user_name}</strong></li>
-                                        //             <hr />
-                                        //             <li>
-                                        //                 <a className='hover:text-gray-400 inline-block px-[10px] py-[5px] font-bold' href="/myProfile">
-                                        //                     <i className="fa-solid fa-address-card mr-1"></i>
-                                        //                     My Profile</a>
-                                        //             </li>style
-                                        //             <hr />
-                                        //             <li><button onClick={() => logOut()} className="hover:text-gray-400 inline-block px-[10px] py-[5px] font-bold"><span className=""><i className="fa-solid fa-right-from-bracket mr-1"></i></span>LogOut</button></li>
-
-                                        //         </ul>
-                                        //     </div>
-                                        // </li>
+                                       
                                         <div>
                                             <Dropdown label="Menu" className={darkMode ? 'bg' : 'bg_l'}>
                                                 <Dropdown.Header>
                                                     <div className='flex items-center'>
-                                                        {/* {!imageUrl ? <img alt="..." src={user && `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName}"&backgroundColor=F79918`}
-                                                            className="w-8 h-8 mr-2 rounded-full" />
-                                                            :
-                                                            <img alt="..." src={imageUrl && `${imageUrl}`}
-                                                                className="w-8 h-8 mr-2 rounded-full" />
-                                                        } */}
-
                                                         <span className="block text-sm  text-left ">
                                                             {user.firstName} {user.lastName}
                                                         </span>
-                                                     
                                                     </div>
-
                                                     <span className="block text-sm font-medium truncate  text-left">
                                                         {user.email}
                                                     </span>
                                                 </Dropdown.Header>
-                                                <Dropdown.Item icon={HiViewGrid} >
-                                                    <a href="/myProfile" >Profile</a>
-                                                </Dropdown.Item>
-                                                {/* <Dropdown.Item icon={HiCog}>
-                                                    Settings
-                                                </Dropdown.Item>
-                                                <Dropdown.Item icon={HiCurrencyDollar}>
-                                                    Earnings
-                                                </Dropdown.Item>
-                                                <Dropdown.Divider /> */}
+                                                <a href="/myProfile" >
+                                                    <Dropdown.Item icon={HiViewGrid} >
+                                                        Profile
+                                                    </Dropdown.Item>
+                                                </a>
                                                 <Dropdown.Item icon={HiLogout} onClick={() => logOut()} >
                                                     Sign out
                                                 </Dropdown.Item>
@@ -150,6 +121,28 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                             </div>
                         </div>
                     </div>
+                </div>
+                <div aria-label="Breadcrumb" className='flex absolute py-4 z-50'>
+                    <ol className="inline-flex items-center space-x-1 md:space-x-3">
+                        <li className="inline-flex items-center">
+                            <a href="/" className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                                <svg aria-hidden="true" className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                                Home
+                            </a>
+                        </li>
+                        <li>
+                            <div className="flex items-center">
+                                <svg aria-hidden="true" className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
+                                <a href={location.pathname} className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">{location.pathname}</a>
+                            </div>
+                        </li>
+                        {/* <li aria-current="page">
+                            <div className="flex items-center">
+                                <svg aria-hidden="true" className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
+                                <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Flowbite</span>
+                            </div>
+                        </li> */}
+                    </ol>
                 </div>
             </div>
             <div className={!showNav ? "bg-black h-screen text-white py-5 px-4 fixed top-0 right-[-100%] z-[100] w-full ease-in-out duration-1000"
@@ -201,6 +194,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                 </div>
 
             </div>
+
         </nav>
     );
 }

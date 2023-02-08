@@ -10,7 +10,6 @@ import Loading from "./Loading";
 
 const SignIn = () => {
 
-
     const [email, setEmail] = useState('');
     const [psw, setPsw] = useState('');
     const [err, setErr] = useState('');
@@ -63,6 +62,7 @@ const SignIn = () => {
                 console.log(user);
                 sessionStorage.setItem('email', email)
                 window.location.replace('/');
+                //navigate('/');
                 // ...
             })
             .catch((error) => {
@@ -96,9 +96,9 @@ const SignIn = () => {
     }, [navigate,psw])
     return (
 
-        <section className="md:h-screen">
+        <section className="">
 
-            <div className="container px-6 py-12 h-full">
+            <div className="container px-6 py-12 lg:h-screen">
                 <h1 className="text-5xl font-bold text-center">Sign In</h1>
 
                 <div className="flex justify-center items-center flex-wrap mt-20 g-6 text-gray-800">

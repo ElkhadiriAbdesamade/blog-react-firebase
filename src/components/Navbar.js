@@ -8,7 +8,8 @@ import { auth, storage } from '../firebase-config';
 import { signOut } from "firebase/auth";
 import { Button, Dropdown } from 'flowbite-react';
 import { getDownloadURL, listAll, ref } from 'firebase/storage';
-import { useLocation } from 'react-router-dom'
+import BreadCrumb from './BreadCrumb';
+
 
 const Navbar = ({ darkMode, setDarkMode, user }) => {
 
@@ -24,7 +25,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
     }
 
     const [year, setYear] = useState('');
-    const location = useLocation();
+   
     const logOut = () => {
 
         signOut(auth).then(() => {
@@ -48,7 +49,6 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
         });
 
 
-        console.log(location.pathname);
 
         setYear(new Date().getFullYear());
     }, [user])
@@ -63,7 +63,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                     <div className="row">
                         <div className="col-md-6 text-center order-1 order-md-2 mb-3 mb-md-0">
                             <a href="/" className="text-3xl text-black dark:text-white font-bold  relative m-0 uppercase decoration-transparent">Blog Page</a>
-                            {user && user.role}
+                            
                         </div>
                         <div className="order-3 col-md-3 order-md-1">
                             <div className="input-group rounded">
@@ -100,7 +100,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                                                         {user.email}
                                                     </span>
                                                 </Dropdown.Header>
-                                                <a href="/myProfile" >
+                                                <a href="/Profile" >
                                                     <Dropdown.Item icon={HiViewGrid} >
                                                         Profile
                                                     </Dropdown.Item>
@@ -122,28 +122,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                         </div>
                     </div>
                 </div>
-                <div aria-label="Breadcrumb" className='flex absolute py-4 z-50'>
-                    <ol className="inline-flex items-center space-x-1 md:space-x-3">
-                        <li className="inline-flex items-center">
-                            <a href="/" className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-                                <svg aria-hidden="true" className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
-                                Home
-                            </a>
-                        </li>
-                        <li>
-                            <div className="flex items-center">
-                                <svg aria-hidden="true" className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
-                                <a href={location.pathname} className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">{location.pathname}</a>
-                            </div>
-                        </li>
-                        {/* <li aria-current="page">
-                            <div className="flex items-center">
-                                <svg aria-hidden="true" className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
-                                <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Flowbite</span>
-                            </div>
-                        </li> */}
-                    </ol>
-                </div>
+                <BreadCrumb/>
             </div>
             <div className={!showNav ? "bg-black h-screen text-white py-5 px-4 fixed top-0 right-[-100%] z-[100] w-full ease-in-out duration-1000"
                 : "bg-black h-screen text-white py-5 px-4 fixed top-0 right-0 w-[350px] z-[100] ease-in-out duration-1000 opacity-90"}>
@@ -156,7 +135,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                             <i className="fa-solid fa-home mr-4"></i>
                             Home</Link></li>
                         {user && <li className='text-2xl font-bold cursor-pointer'>
-                            <Link className='hover:text-gray-400' to="/myProfile" onClick={toggelNav}>
+                            <Link className='hover:text-gray-400' to="/Profile" onClick={toggelNav}>
                                 <i className="fa-solid fa-address-card mr-4"></i>
                                 My Profile</Link></li>
                         }

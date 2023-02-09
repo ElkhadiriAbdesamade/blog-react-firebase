@@ -2,9 +2,20 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { collection, getDocs, query, where } from '@firebase/firestore'
 import { db } from "../../firebase-config";
+import Disqus from "disqus-react"
+import LoadingPage from "../LodingPage";
 const BlogDetails = () => {
     const { id } = useParams()
     const [blog, setBlog] = useState();
+    
+    const disqusShortname = "http-localhost-3000-4eq1x2maft";
+    let disqusConfig;
+    // const disqusConfig = {
+    //     url: "http://localhost:3000",
+    //     identifier: id,
+    //     title: blog.title
+    // }
+
     useEffect(() => {
         console.log(id);
 
@@ -15,15 +26,21 @@ const BlogDetails = () => {
             const data = await getDocs(q);
             setBlog(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0]);
 
+            disqusConfig = {
+                url: "http://localhost:3000",
+                identifier: id,
+                title: data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0].title
+            }
+
         };
         getBlog();
         console.log(blog);
     }, []);
     return (
-        <div>
+        <div className="">
             {blog ?
                 <main className="pt-8 pb-16 lg:pt-16 lg:pb-24">
-                    <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
+                    <div className="flex flex-col gap-[100px] justify-between px-4 mx-auto max-w-screen-xl ">
                         <article className="mx-auto w-full max-w-2xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
                             <header className="mb-4 lg:mb-6 not-format">
                                 <address className="flex items-center mb-6 not-italic">
@@ -50,15 +67,21 @@ const BlogDetails = () => {
                                 {blog.desc}.
                             </p>
                             <figure>
-                                <img src={`${blog.blogImg}`} alt="" className="rounded-xl mt-4"/>
+                                <img src={`${blog.blogImg}`} alt="" className="rounded-xl mt-4" />
                             </figure>
                         </article>
+                        <div id="comments" className="">
+                            {blog && <Disqus.DiscussionEmbed
+                                shortname={disqusShortname}
+                                config={disqusConfig}
+                            />}
+                        </div>
+
                     </div>
                 </main> :
-                <div>
-                    not exist
-                </div>
+                <LoadingPage/>
             }
+
         </div>
     );
 }

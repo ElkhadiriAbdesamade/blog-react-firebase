@@ -8,7 +8,7 @@ import SuccessAlert from "./SuccessAlert";
 import Loading from "./Loading";
 
 
-const SignIn = () => {
+const SignIn = ({user}) => {
 
     const [email, setEmail] = useState('');
     const [psw, setPsw] = useState('');
@@ -60,7 +60,7 @@ const SignIn = () => {
                 // Signed in 
                 const user = userCredential.user;
                 console.log(user);
-                sessionStorage.setItem('email', email)
+                //sessionStorage.setItem('email', email)
                 window.location.replace('/');
                 //navigate('/');
                 // ...
@@ -75,8 +75,9 @@ const SignIn = () => {
 
     }
     useEffect(() => {
-        console.log(sessionStorage.getItem('email'));
-        if (sessionStorage.getItem('email') !== null && sessionStorage.getItem('email') !== "") {
+        //console.log(sessionStorage.getItem('email'));
+        console.log(user);
+        if (user) {
             navigate('/');
         }
         const keyDownHandler = event => {
@@ -93,7 +94,7 @@ const SignIn = () => {
           return () => {
             document.removeEventListener('keydown', keyDownHandler);
           };
-    }, [navigate,psw])
+    }, [navigate,psw,user])
     return (
 
         <section className="">

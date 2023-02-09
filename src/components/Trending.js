@@ -1,6 +1,7 @@
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
+import { collection, getDocs, query, where, orderBy, limit } from '@firebase/firestore'
 
 // Import Swiper styles
 import "swiper/css";
@@ -9,9 +10,22 @@ import "swiper/css/navigation";
 
 // import required modules
 import { Autoplay, Pagination, Navigation } from "swiper";
+import { useEffect, useState } from "react";
+import { db } from "../firebase-config";
 
 const Trending = () => {
+    const [blogs, setBlogs] = useState([]);
 
+    useEffect(() => {
+        const blogsCollectionRef = collection(db, "blogs");
+        const getBlogs = async () => {
+            const q = query(blogsCollectionRef, limit(4));
+            const data = await getDocs(q);
+            setBlogs(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+
+        };
+        getBlogs();
+    }, [])
 
     return (
         <section className='pt-12 pb-0 max-w-[1320px] mx-auto '>
@@ -22,6 +36,7 @@ const Trending = () => {
                     </div>
                 </div>
                 <div className='flex'>
+
                     <Swiper
                         spaceBetween={30}
                         centeredSlides={true}
@@ -36,96 +51,43 @@ const Trending = () => {
                         modules={[Autoplay, Pagination, Navigation]}
                         className="mySwiper rounded-xl mb-10"
                     >
-                        <SwiperSlide>
-                            <div className="grid md:grid-flow-col dark:bg-[#50577A] p-8">
-                                <div className="inline-grid md:mr-8 ">
-                                    <a href="/">
-                                        <img src="https://preview.colorlib.com/theme/magdesign/images/post_lg_2.jpg" alt="Img" className="rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
+                        {blogs.map((blog) => (
+                            <SwiperSlide key={blog.id}>
+                                <div className="grid md:grid-flow-col dark:bg-[#50577A] p-8">
+                                    <div className="inline-grid md:mr-8 ">
+                                        <a href="/">
+                                            <img src={`${blog.blogImg}`} alt="Img" className="rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
+                                        </a>
+                                    </div>
+                                    <div className="self-center text-[14px] inline-grid ">
+                                        <div className="mb-4 text-left " >
+                                            {blog.category.map((cat) => (
+                                                <span className="font-bold text-[#222] dark:text-white" key={cat}>{cat},&nbsp;</span>
+                                            ))}
+                                            &nbsp;<span className="text-[#999]">—</span>&nbsp;
+                                            <span className="text-[#999] dark:text-white">{blog.date_creation}</span>
+                                        </div>
+                                        <h2 className='font-bold text-[40px] text-left leading-[1.2] mb-2'><a href={`/blogDetails/${blog.id}`}>{blog.title}.</a></h2>
+                                        <p className="text-left text-[#999] mb-4 dark:text-white">
+                                        {blog.desc.substring(0,100)+"..."}.
+                                        </p>
+                                        <div className="flex">
+                                    <a href={`/Author/${blog.user.id}`} className="flex items-center">
+                                        <div className="flex-grow-0 flex-shrink-0 basis-11 mr-[10px]">
+                                            <img className="max-w-full rounded-full" src={`${blog.user.coverUrl}`} alt="Img" />
+                                        </div>
+                                        <div className="flex flex-col items-start">
+                                            <strong>{blog.user.firstName} {blog.user.lastName}</strong>
+                                            <span>{blog.user.email}</span>
+                                        </div>
                                     </a>
+                                    
                                 </div>
-                                <div className="self-center text-[14px] inline-grid ">
-                                    <div className="mb-4 text-left" >
-                                        <a className="font-bold text-[#222] dark:text-white" href="/">Business</a>,&nbsp;
-                                        <a className="font-bold text-[#222] dark:text-white" href="/">Travel</a>&nbsp;<span className="text-[#999]">—</span>&nbsp;
-                                        <span className="text-[#999] dark:text-white">July 2, 2020</span>
                                     </div>
-                                    <h2 className='font-bold text-[40px] text-left leading-[1.2] mb-2'><a href="/">Your most unhappy customers are your greatest source of learning.</a></h2>
-                                    <p className="text-left text-[#999] mb-4 dark:text-white">
-                                        Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.
-                                    </p>
-                                    <a href="/" className="flex items-center">
-                                    <div className="flex-grow-0 flex-shrink-0 basis-11 mr-[10px]">
-                                        <img className="max-w-full rounded-full" src="https://preview.colorlib.com/theme/magdesign/images/person_1.jpg" alt="Img"/>
-                                    </div>
-                                    <div className="flex flex-col items-start">
-                                        <strong>Sergy Campbell</strong>
-                                        <span>CEO and Founder</span>
-                                    </div>
-                                </a>
+
                                 </div>
-                                
-                            </div>
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <div className="grid md:grid-flow-col dark:bg-[#50577A] p-8">
-                                <div className="inline-grid md:mr-8 ">
-                                    <a href="/">
-                                        <img src="https://preview.colorlib.com/theme/magdesign/images/post_lg_2.jpg" alt="Img" className="rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
-                                    </a>
-                                </div>
-                                <div className="self-center text-[14px] inline-grid ">
-                                    <div className="mb-4 text-left" >
-                                        <a className="font-bold text-[#222] dark:text-white" href="/">Business</a>,&nbsp;
-                                        <a className="font-bold text-[#222] dark:text-white" href="/">Travel</a>&nbsp;<span className="text-[#999]">—</span>&nbsp;
-                                        <span className="text-[#999] dark:text-white">July 2, 2020</span>
-                                    </div>
-                                    <h2 className='font-bold text-[40px] text-left leading-[1.2] mb-2'><a href="/">Your most unhappy customers are your greatest source of learning.</a></h2>
-                                    <p className="text-left text-[#999] mb-4 dark:text-white">
-                                        Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.
-                                    </p>
-                                    <a href="/" className="flex items-center">
-                                    <div className="flex-grow-0 flex-shrink-0 basis-11 mr-[10px]">
-                                        <img className="max-w-full rounded-full" src="https://preview.colorlib.com/theme/magdesign/images/person_1.jpg" alt="Img"/>
-                                    </div>
-                                    <div className="flex flex-col items-start">
-                                        <strong>Sergy Campbell</strong>
-                                        <span>CEO and Founder</span>
-                                    </div>
-                                </a>
-                                </div>
-                                
-                            </div>
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <div className="grid md:grid-flow-col dark:bg-[#50577A] p-8">
-                                <div className="inline-grid md:mr-8 ">
-                                    <a href="/">
-                                        <img src="https://preview.colorlib.com/theme/magdesign/images/post_lg_2.jpg" alt="Img" className="rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
-                                    </a>
-                                </div>
-                                <div className="self-center text-[14px] inline-grid ">
-                                    <div className="mb-4 text-left" >
-                                        <a className="font-bold text-[#222] dark:text-white" href="/">Business</a>,&nbsp;
-                                        <a className="font-bold text-[#222] dark:text-white" href="/">Travel</a>&nbsp;<span className="text-[#999]">—</span>&nbsp;
-                                        <span className="text-[#999] dark:text-white">July 2, 2020</span>
-                                    </div>
-                                    <h2 className='font-bold text-[40px] text-left leading-[1.2] mb-2'><a href="/">Your most unhappy customers are your greatest source of learning.</a></h2>
-                                    <p className="text-left text-[#999] mb-4 dark:text-white">
-                                        Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.
-                                    </p>
-                                    <a href="/" className="flex items-center">
-                                    <div className="flex-grow-0 flex-shrink-0 basis-11 mr-[10px]">
-                                        <img className="max-w-full rounded-full" src="https://preview.colorlib.com/theme/magdesign/images/person_1.jpg" alt="Img"/>
-                                    </div>
-                                    <div className="flex flex-col items-start">
-                                        <strong>Sergy Campbell</strong>
-                                        <span>CEO and Founder</span>
-                                    </div>
-                                </a>
-                                </div>
-                                
-                            </div>
-                        </SwiperSlide>
+                            </SwiperSlide>
+                        ))}
 
                     </Swiper>
 

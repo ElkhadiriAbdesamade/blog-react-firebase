@@ -10,11 +10,12 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import NotFound from "./components/NotFound";
 import { collection, getDocs, query, where } from '@firebase/firestore'
-import { db } from '../src/firebase-config';
+import { auth, db } from '../src/firebase-config';
 import UserProfile from "./components/UserProfile";
 import LoadingPage from "./components/LodingPage";
 import BlogDetails from "./components/blog/BlogDetails";
 import EditBlog from "./components/blog/EditBlog";
+
 
 function App() {
 
@@ -31,16 +32,18 @@ function App() {
 
 
 
-
+  const currentUser = auth.currentUser;
   //const u = useRef();
 
   useEffect(() => {
-    let email = sessionStorage.getItem("email")
-    if (email !== "") {
+    //let email = sessionStorage.getItem("email")
+    
+    console.log(currentUser);
+    if (currentUser !== null) {
       const usersCollectionRef = collection(db, "users");
       const getRole = async () => {
 
-        const q = query(usersCollectionRef, where("email", "==", email));
+        const q = query(usersCollectionRef, where("email", "==", currentUser.email));
         const data = await getDocs(q);
         setUser(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0]);
        
@@ -61,7 +64,7 @@ function App() {
     
     // setRole(localStorage.getItem('role'));
   
-  }, []);
+  }, [currentUser]);
   return (
     <div className={darkMode ? 'dark text-white ease-in-out duration-1000 ' : 'ease-in-out duration-1000 '}>
       <Router>
@@ -70,12 +73,13 @@ function App() {
           <Navbar darkMode={darkMode} setDarkMode={changeDark} user={user} />
           <Routes>
             <Route path='/' element={[<Trending key={'t'} />, <Post key={'p'} blogs={blogs} user={user}/>]} />
-            <Route path="/myProfile" element={<UserProfile darkMode={darkMode} user={user}/>} />
+            <Route path="/Author/:id" element={<UserProfile darkMode={darkMode}/>} />
+            <Route path="/Profile" element={<UserProfile darkMode={darkMode} user={user}/>} />
             <Route path="/blogDetails/:id" element={<BlogDetails darkMode={darkMode} user={user}/>} />
             <Route path="/updateBlog/:id" element={<EditBlog darkMode={darkMode} user={user}/>} />
 
-            <Route path='/sign_in' element={<SignIn />} />
-            <Route path='/sign_up' element={<SignUp />} />
+            <Route path='/sign_in' element={<SignIn user={user}/>} />
+            <Route path='/sign_up' element={<SignUp user={user}/>} />
             <Route path='*' element={<NotFound />} />
           </Routes>
 

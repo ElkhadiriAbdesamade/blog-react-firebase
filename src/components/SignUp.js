@@ -9,7 +9,7 @@ import Loading from "./Loading";
 
 
 
-const SignUp = () => {
+const SignUp = ({user}) => {
 
     const [countries, setCountries] = useState([])
     const [email, setEmail] = useState('')
@@ -30,9 +30,9 @@ const SignUp = () => {
     }
     const navigate = useNavigate();
     const usersCollectionRef = collection(db, "users");
-    let user = { email: email, firstName: firstName, lastName: lastName, country: country,user_name:userName, bio: '', role: "user" }
+    let cUser = { email: email, firstName: firstName, lastName: lastName, country: country,user_name:userName, bio: '', role: "user" }
     const addUser = async () => {
-        await addDoc(usersCollectionRef, user);
+        await addDoc(usersCollectionRef, cUser);
     };
 
     
@@ -69,7 +69,6 @@ const SignUp = () => {
             .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
-                console.log(user);
                 setSuc('Signed in ');
                 setErr('');
                 setLoad(false);
@@ -86,7 +85,7 @@ const SignUp = () => {
                 setErr(error.code);
                 // ..
             });
-        console.log(user);
+        
 
        
 
@@ -110,11 +109,11 @@ const SignUp = () => {
             });
     }
     useEffect(() => {
-        if (sessionStorage.getItem('email') !== null && sessionStorage.getItem('email') !== "") {
+        if (user) {
             navigate('/');
         }
         get_Countries()
-    }, [navigate])// eslint-disable-line react-hooks/exhaustive-deps
+    }, [navigate,user])// eslint-disable-line react-hooks/exhaustive-deps
     return (
         <section className="">
 

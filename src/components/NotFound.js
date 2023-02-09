@@ -5,12 +5,12 @@ import { useState } from 'react';
 
 const NotFound = () => {
 
-    const [seconds, setSeconds] = useState(1)
+    const [seconds, setSeconds] = useState(8)
 
 
     setInterval(() => {
-        setSeconds(seconds + 1)
-        if (seconds >= 7) {
+        setSeconds(seconds - 1)
+        if (seconds === 1) {
             window.location.replace('/')
         }
     }, 1000)

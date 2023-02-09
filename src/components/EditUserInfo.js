@@ -10,6 +10,7 @@ import ErrorAlert from "./ErrorAlert";
 import SuccessAlert from "./SuccessAlert";
 import Loading from "./Loading";
 import { updateEmail, updatePassword } from "firebase/auth";
+import { Link } from "react-scroll";
 
 const EditUserInfo = ({ user }) => {
     const usersCollectionRef = collection(db, "users");
@@ -17,14 +18,17 @@ const EditUserInfo = ({ user }) => {
 
     const [imageUpload, setImageUpload] = useState(null);
     const [image, setImage] = useState('');
+    
 
 
     const [email, setEmail] = useState('')
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
+    const [profession, setProfession] = useState('')
+    const [education, setEducation] = useState('')
     const [bio, setBio] = useState('')
     const [country, setCountry] = useState('');
-    
+
     const [psw, setPsw] = useState('');
     const [confPsw, setConfPsw] = useState('');
     //user Info
@@ -39,10 +43,14 @@ const EditUserInfo = ({ user }) => {
     const [errPsw, setErrPsw] = useState('');
     const [sucPsw, setSucPsw] = useState('');
     const [loadPsw, setLoadPsw] = useState(false);
-
+    //delete
+    const [errDel, setErrDel] = useState('');
+    const [sucDel, setSucDel] = useState('');
+    const [loadDel, setLoadDel] = useState(false);
+    const [msgConfirmation, setMsgConfirmation] = useState(false);
 
     const [countries, setCountries] = useState([])
-    
+
     const changeErrAlert = () => {
         setErrProfile('')
         setErrEmail('')
@@ -92,7 +100,7 @@ const EditUserInfo = ({ user }) => {
         //reauthenticateWithCredential(auth.currentUser,auth)
         updateEmail(user, email).then(() => {
             // Profile updated!
-            setSucEmail('Email updated!');
+            setSucEmail('Email updated successfully');
             setErrEmail('');
             setLoadEmail(false);
             // ...
@@ -130,7 +138,7 @@ const EditUserInfo = ({ user }) => {
         //reauthenticateWithCredential(auth.currentUser,auth)
         updatePassword(user, psw).then(() => {
             // Profile updated!
-            setSucPsw('Password updated!');
+            setSucPsw('Password updated successfully');
             setErrPsw('');
             setLoadPsw(false);
             // ...
@@ -147,10 +155,10 @@ const EditUserInfo = ({ user }) => {
 
     const updatePersonalInfo = async () => {
         setErrProfile('')
-        let coverUrl;
+        let coverUrl='';
         setLoadProfile(true);
-        if (firstName === '' || lastName === '' || country === '' || bio === '') {
-            setErrProfile('Please Fill All Your Info !!');
+        if (firstName === '' || lastName === '' || country === '' || bio === '' || profession==='' || education==='') {
+            setErrProfile('Please Fill in All Your Info !!');
             setLoadProfile(false);
             return;
         }
@@ -166,44 +174,62 @@ const EditUserInfo = ({ user }) => {
             const imageRef = ref(storage, `images/usersCover/${user.id}`);
             await uploadBytes(imageRef, imageUpload).then(snapshot => {
                 return getDownloadURL(snapshot.ref)
-              })
-              .then(downloadURL => {
-                coverUrl=downloadURL;
-                console.log('Download URL', downloadURL)
-              }).catch((error) => {
-                // A full list of error codes is available at
-                // https://firebase.google.com/docs/storage/web/handle-errors
-                switch (error.code) {
-                    case 'storage/unauthorized':
-                        // User doesn't have permission to access the object
-                        setErrProfile('User don`t have permission to access the object');
-                        setSucProfile('');
-                        setLoadProfile(false);
-                        break;
-                    case 'storage/canceled':
-                        // User canceled the upload
-                        setErrProfile('User canceled the upload');
-                        setSucProfile('');
-                        setLoadProfile(false);
-                        break;
-                    case 'storage/unknown':
-                        // Unknown error occurred, inspect error.serverResponse
-                        setErrProfile('Unknown error occurred, inspect error.serverResponse');
-                        setSucProfile('');
-                        setLoadProfile(false);
-                        break;
-                }
-            });
+            })
+                .then(downloadURL => {
+                    coverUrl=downloadURL;
+                    console.log('Download URL', downloadURL)
+                }).catch((error) => {
+                    // A full list of error codes is available at
+                    // https://firebase.google.com/docs/storage/web/handle-errors
+                    switch (error.code) {
+                        case 'storage/unauthorized':
+                            // User doesn't have permission to access the object
+                            setErrProfile('User don`t have permission to access the object');
+                            setSucProfile('');
+                            setLoadProfile(false);
+                            break;
+                        case 'storage/canceled':
+                            // User canceled the upload
+                            setErrProfile('User canceled the upload');
+                            setSucProfile('');
+                            setLoadProfile(false);
+                            break;
+                        case 'storage/unknown':
+                            // Unknown error occurred, inspect error.serverResponse
+                            setErrProfile('Unknown error occurred, inspect error.serverResponse');
+                            setSucProfile('');
+                            setLoadProfile(false);
+                            break;
+                    }
+                });
+        }
+        let newFields;
+        if (coverUrl !=='') {
+             newFields = { firstName: firstName, lastName: lastName, coverUrl: coverUrl, country: country, bio: bio };
+        }
+        else{
+            newFields = { firstName: firstName, lastName: lastName,country: country, bio: bio };
         }
 
         const userDoc = doc(db, "users", user.id);
-        const newFields = { firstName: firstName, lastName: lastName,coverUrl:coverUrl, country: country, bio: bio };
+       
         await updateDoc(userDoc, newFields)
         setSucProfile('Info updated successfully');
         setErrProfile('');
         setLoadProfile(false);
-        window.location.replace('/myProfile')
+        window.location.replace('/Profile')
     };
+
+    const delete_account = () => {
+        //delete user Info from fireStore
+
+        //delete user Account from fireBase Authentication
+
+        //delete user Image from storage 
+
+        //delete user Blogs
+
+    }
 
     useEffect(() => {
         setFirstName(user.firstName)
@@ -211,6 +237,9 @@ const EditUserInfo = ({ user }) => {
         setEmail(user.email)
         setBio(user.bio)
         setCountry(user.country)
+        setEducation(user.education)
+        setProfession(user.profession)
+        setImage(user.coverUrl)
         get_Countries();
     }, [])
 
@@ -218,7 +247,7 @@ const EditUserInfo = ({ user }) => {
         <div className="mt-8">
             <h1 className="text-5xl font-bold text-center">Edit Profile</h1>
             <div className="md:w-8/12 lg:ml-20 mx-auto">
-                <div className="mt-10 py-4 border-t border-blueGray-200 text-center">
+                <div id="t" className="mt-10 py-4 border-t border-blueGray-200 text-center">
                     <h1 className="text-2xl font-bold text-left mb-4">Personnel Info</h1>
                     <div>
                         {errProfile && <ErrorAlert msg={errProfile} setErr={changeErrAlert} />}
@@ -229,7 +258,7 @@ const EditUserInfo = ({ user }) => {
                         <div className="mb-6 flex gap-2 w-full">
                             <div className="flex flex-col items-start w-full
                             ">
-                                <label htmlFor="">First Name :</label>
+                                <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">First Name :</h3>
                                 <input
                                     type="text"
                                     className="form-control  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -239,8 +268,8 @@ const EditUserInfo = ({ user }) => {
                                 />
                             </div>
                             <div className="flex flex-col items-start w-full
-                            ">
-                                <label htmlFor="">Last Name :</label>
+                            ">                        
+                                <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Last Name :</h3>
                                 <input
                                     type="text"
                                     className="form-control  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -251,10 +280,10 @@ const EditUserInfo = ({ user }) => {
                             </div>
                         </div>
                         <div className="flex flex-col items-start w-full
-                            ">
-                            <label htmlFor="">Country :</label>
+                            ">                           
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Country :</h3>
                             <div className="mb-6 w-full">
-                                <select id="countries" className="bg-gray-50 border border-gray-300 text-black rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                <select id="countries" className="bg-gray-50 border px-4 border-gray-300 text-black rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                     onChange={(event) => { setCountry(event.target.value) }}>
                                     <option defaultValue>{country}</option>
                                     {countries.map((count) => {
@@ -264,9 +293,32 @@ const EditUserInfo = ({ user }) => {
                                 </select>
                             </div>
                         </div>
+                        <div className="mb-6 flex flex-col items-start w-full">
+                        <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Profession :</h3>
+                            <input
+                                type="text"
+                                className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                                placeholder="Profession"
+                                value={profession}
+                                onChange={(event) => { setProfession(event.target.value) }}
+                            />
+                        </div>
+                        <div className="mb-6 flex flex-col items-start w-full">
+                        <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Education :</h3>
+                                <select className="bg-gray-50 border border-gray-300 text-black rounded focus:ring-blue-500 focus:border-blue-500 block w-full px-4 p-2.5"
+                                    onChange={(event) => { setEducation(event.target.value) }}>
+                                    <option selected={true}>{education}</option>
+                                    <option disabled>__________________________</option>
+                                    <option  value='Master Degree'>Master Degree</option>
+                                    <option value='License Degree'>License Degree</option>
+                                    <option value='Bachelor Degree'>Bachelor</option>
+                                </select>
+                           
+                            
+                        </div>
                         <div className="flex flex-col items-start w-full
-                            ">
-                            <label htmlFor="">your Bio :</label>
+                            ">                  
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">your Bio :</h3>
                             <div className="mb-6 w-full">
                                 <textarea className="form-control w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                     rows={6}
@@ -287,7 +339,7 @@ const EditUserInfo = ({ user }) => {
                                     onChange={(event) => { setImageUpload(event.target.files[0]); handleChangeImage(event) }} />
 
                             </div> */}
-                            <label htmlFor="">Profile Image :</label>
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Profile Image :</h3>
                             <div className="flex items-center justify-center w-full pb-4">
                                 <label style={{
                                     backgroundImage: `url(${image})`,
@@ -305,11 +357,11 @@ const EditUserInfo = ({ user }) => {
                                 </label>
                             </div>
                         </div>
-                        <button onClick={() => { updatePersonalInfo() }} className="bg-[#F79918] active:bg-[#c47a12] uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button"
+                        <Link to="t" spy={true} offset={50} duration={200} onClick={() => { updatePersonalInfo() }} className="bg-[#F79918] active:bg-[#c47a12] uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button"
                         >
                             <i className="fa-solid fa-pen mr-2"></i>
                             Edit Info
-                        </button>
+                        </Link>
                     </div>
 
                     <div className="mt-10 py-4 border-t border-blueGray-200 text-center">
@@ -319,7 +371,8 @@ const EditUserInfo = ({ user }) => {
                             {sucEmail && <SuccessAlert msg={sucEmail} setSuc={changeSucAlert} />}
                             {loadEmail && <Loading />}
                         </div>
-                        <div className="mb-6 w-full">
+                        <div className="mb-6 flex flex-col items-start w-full">
+                        <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Email address :</h3>
                             <input
                                 type="text"
                                 className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -340,7 +393,8 @@ const EditUserInfo = ({ user }) => {
                             {sucPsw && <SuccessAlert msg={sucPsw} setSuc={changeSucAlert} />}
                             {loadPsw && <Loading />}
                         </div>
-                        <div className="mb-6 w-full">
+                        <div className="mb-6 flex flex-col items-start w-full">
+                        <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Password :</h3>
                             <input
                                 type="password"
                                 className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -348,20 +402,47 @@ const EditUserInfo = ({ user }) => {
                                 onChange={(event) => { setPsw(event.target.value) }}
                             />
                         </div>
-                        <div className="mb-6 w-full">
+                        <div className="mb-6 flex flex-col items-start w-full">
+                        <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Confirm Password :</h3>
                             <input
                                 type="password"
                                 className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none "
-                                placeholder="Confirme Password"
+                                placeholder="Confirm Password"
                                 onChange={(event) => { setConfPsw(event.target.value) }}
                             />
                         </div>
-                        <button onClick={() => { update_psw()}} className="bg-[#F79918] active:bg-[#c47a12] uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
+                        <button onClick={() => { update_psw() }} className="bg-[#F79918] active:bg-[#c47a12] uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
                             <i className="fa-solid fa-pen mr-2"></i>
                             Edit Password
                         </button>
                     </div>
-
+                    <div className="mt-10 py-4 border-t border-blueGray-200 text-center bg-red-400 rounded-lg p-4">
+                        <h1 className="text-2xl font-bold text-left mb-4">Delete Account</h1>
+                        <div>
+                            {errDel && <ErrorAlert msg={errDel} setErr={changeErrAlert} />}
+                            {sucDel && <SuccessAlert msg={sucDel} setSuc={changeSucAlert} />}
+                            {loadDel && <Loading />}
+                        </div>
+                        {msgConfirmation && <div className="text-center pt-4 lg:px-4 mb-4">
+                            <div className="p-2 bg-red-500 items-center text-indigo-100 leading-none rounded-full inline-flex w-75" role="alert">
+                                <span className="flex rounded-full bg-red-700 uppercase px-2 py-1 text-xs font-bold mr-3">Confirmation</span>
+                                <span className="font-semibold mr-2 text-left flex-auto">
+                                    Are you sure !!
+                                </span>
+                                <button onClick={() => { delete_account() }} className="bg-red-700 active:bg-red-800 uppercase text-white font-bold hover:shadow-md shadow text-sm px-2 py-2 rounded-full outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
+                                    yes
+                                </button>
+                                <button onClick={() => { setMsgConfirmation(false) }} className="bg-green-700 active:bg-green-800 uppercase text-white font-bold hover:shadow-md shadow text-sm px-2 py-2 rounded-full outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
+                                    No
+                                </button>
+                            </div>
+                        </div>
+                        }
+                        <button onClick={() => { setMsgConfirmation(true) }} className="bg-red-500 active:bg-red-700 uppercase text-white font-bold hover:shadow-md shadow text-2xl px-4 py-4 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150 w-full" type="button">
+                            <i className="fa-solid fa-trash mr-2"></i>
+                            Delete Account
+                        </button>
+                    </div>
 
 
 

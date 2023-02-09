@@ -16,7 +16,10 @@ const EditBlog = ({ user }) => {
     //const [blog, setBlog] = useState();
 
     const [image, setImage] = useState('');
+
     const [blogId, setBlogId] = useState('');
+
+
 
     const [arrayCat, setArrayCat] = useState(['Travel', 'Food', 'Technology', 'Business'])
 
@@ -46,18 +49,20 @@ const EditBlog = ({ user }) => {
         setImage(URL.createObjectURL(e.target.files[0]))
         console.log(image);
     }
+   
 
     const updateBlog = async () => {
         console.log(category);
         setErr('')
-        let coverUrl;
+        let coverUrl='';
         setLoad(true);
-        if (title === '' || desc === '' || category === [] || imageUpload === null) {
+        if (title === '' || desc === '' || category === []) {
             setErr('Please Fill All Blog Info !!');
             setLoad(false);
             return;
         }
         if (imageUpload !== null) {
+           
             if (imageUpload.size > 2097152) {
                 setErr('Please choose Image With size Less then 2MB !!');
                 setSuc('');
@@ -71,7 +76,7 @@ const EditBlog = ({ user }) => {
                 return getDownloadURL(snapshot.ref)
             })
                 .then(downloadURL => {
-                    coverUrl = downloadURL;
+                    coverUrl=downloadURL;
                     console.log('Download URL', downloadURL)
                 }).catch((error) => {
                     // A full list of error codes is available at
@@ -99,15 +104,14 @@ const EditBlog = ({ user }) => {
                 });
         }
 
-  
+        let blog;
+        if (coverUrl !=='') {
+            blog = { title: title, desc: desc, category: category, blogImg: coverUrl }
+        }else{
+            blog = { title: title, desc: desc, category: category }
+        }
 
-        // const blogsCollectionRef = collection(db, "blogs");
-        // let blog = { title: title, desc: desc, category: category, blogImg: coverUrl, date_creation: currentDate, user: user }
-        // console.log(blog);
-        // await addDoc(blogsCollectionRef, blog);
-
-        const blogDoc = doc(db, "blogs", blogId);
-        const blog = { title: title, desc: desc, category: category, blogImg: coverUrl }
+        const blogDoc = doc(db, "blogs", blogId); 
         await updateDoc(blogDoc, blog)
 
         setSuc('Blog Updated successfully');
@@ -134,7 +138,8 @@ const EditBlog = ({ user }) => {
             setTitle(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0].title);
             setDesc(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0].desc);
             setCategory(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0].category);
-
+            setImage(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0].blogImg);
+            
         };
         getBlog();
         //console.log(blog);
@@ -144,7 +149,7 @@ const EditBlog = ({ user }) => {
     return (
         <div>
 
-            <div className="mt-8">
+            <div className="mt-8 px-8">
                 <h1 className="text-5xl font-bold text-center">Edit Blog</h1>
                 <div className="md:w-8/12 lg:ml-20 mx-auto">
                     <div id="t" className="mt-10 py-4 border-t border-blueGray-200 text-center">

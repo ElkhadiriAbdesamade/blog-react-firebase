@@ -106,11 +106,13 @@ a:hover{
 .bg{
   background: #50577A !important;
   width: 200px !important;
+  z-index: 60;
 }
 
 .bg_l{
   background: #fff !important;
   width: 200px !important;
+  z-index: 60;
 }
 
 [x-cloak] {

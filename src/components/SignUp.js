@@ -40,7 +40,7 @@ const SignUp = ({user}) => {
     const handleSignUp = async () => {
         setLoad(true);
         setErr('');
-        if (user.email === "" || user.firstName === "" || user.lastName === "" ||user.user_name === "" || user.country === "" || user.email === "" || psw === "" || pswConfirmation === "") {
+        if (email === "" || firstName === "" || lastName === "" || country === "" || psw === "" || pswConfirmation === "") {
             setSuc('');
             setErr('Please Fill In All your information !!');
             setLoad(false);
@@ -49,21 +49,21 @@ const SignUp = ({user}) => {
         if (psw !== pswConfirmation) {
             setSuc('');
             setLoad(false);
-            setErr('password and password Confirmation dont match !!');
+            setErr('password and password Confirmation don`t match !!');
             return;
         }
 
-         //Check if user_Name Exist
-        const q = query(usersCollectionRef, where("user_name", "==", userName));
-        const data = await getDocs(q);
-        const userN=data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0]
-        console.log(userN);
-        if (userN !== undefined) {
-            setSuc('');
-            setLoad(false);
-            setErr('User Name already Exist !!');
-            return;
-        }
+        //  //Check if user_Name Exist
+        // const q = query(usersCollectionRef, where("user_name", "==", userName));
+        // const data = await getDocs(q);
+        // const userN=data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0]
+        // console.log(userN);
+        // if (userN !== undefined) {
+        //     setSuc('');
+        //     setLoad(false);
+        //     setErr('User Name already Exist !!');
+        //     return;
+        // }
         addUser();
         createUserWithEmailAndPassword(auth, email, psw)
             .then((userCredential) => {
@@ -158,15 +158,6 @@ const SignUp = ({user}) => {
                                     onChange={(event) => { setEmail(event.target.value) }}
                                 />
                             </div>
-                            <div className="mb-6 w-full">
-                                <input
-                                    type="text"
-                                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                    placeholder="User Name"
-                                    onChange={(event) => { setUserName(event.target.value) }}
-                                />
-                            </div>
-
                             <div className="mb-6 w-full">
                                 <select id="countries" className="bg-gray-50 border border-gray-300 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                     onChange={(event) => { setCountry(event.target.value) }}>

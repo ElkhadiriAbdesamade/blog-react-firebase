@@ -6,14 +6,31 @@ import { AiOutlineHeart, AiTwotoneHeart } from 'react-icons/ai';
 import { FaTrashAlt } from 'react-icons/fa';
 import { db } from "../firebase-config";
 
+
+
+import { Button, Modal } from "flowbite-react";
+
+import { HiOutlineExclamationCircle } from 'react-icons/hi'
+
+
+
 const Post = ({ blogs, user }) => {
 
-   
+    const [showModal, setShowModal] = useState(false);
+    const [confDel, setConfDel] = useState(false);
+    const [deletedBlogId, setDeletedBlogId] = useState();
+
+
     
+
+    const deleteBlog=async ()=>{
+        
+        const blogDoc = doc(db, "blogs", deletedBlogId);
+        await deleteDoc(blogDoc);
+    }
     useEffect(() => {
         console.log(blogs);
-       
-        //console.log(blogLikes);
+
     }, [blogs]);
     return (
         <section className='pt-12 pb-0 max-w-[1320px] mx-auto '>
@@ -57,10 +74,10 @@ const Post = ({ blogs, user }) => {
                                 <p className="text-left text-[#999] mb-4 dark:text-white">
                                     {blog.desc.substring(0,100)+"..."}.
                                 </p>
-                                <div className="flex">
+                                <div className="flex justify-between">
                                     <a href={`/Author/${blog.user.id}`} className="flex items-center">
                                         <div className="flex-grow-0 flex-shrink-0 basis-11 mr-[10px]">
-                                            <img className="img max-w-full rounded-full" src={`${blog.user.coverUrl}`} alt="Img" />
+                                            <img className="h-11 max-w-full rounded-full" src={`${blog.user.coverUrl}`} alt="Img" />
                                         </div>
                                         <div className="flex flex-col items-start">
                                             <strong>{blog.user.firstName} {blog.user.lastName}</strong>
@@ -72,10 +89,11 @@ const Post = ({ blogs, user }) => {
                                             <BsPencilSquare size={30} />
                                             <span className="sr-only">Edit</span>
                                         </a>
-                                        <a href="/" className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 " title="Delete">
+                                        <button onClick={() => { setDeletedBlogId(blog.id);setShowModal(true) }} className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 " title="Delete">
                                             <FaTrashAlt size={30} />
                                             <span className="sr-only">Delete</span>
-                                        </a>
+                                        </button>
+                                       
                                     </div>}
                                 </div>
 
@@ -85,7 +103,44 @@ const Post = ({ blogs, user }) => {
 
                 </div>
 
+
             </div>
+            <div>
+            
+            <Modal
+                show={showModal}
+                size="md"
+                popup={true}
+                onClick={() => { setShowModal(false) }}
+            >
+                <Modal.Header />
+                <Modal.Body>
+                    <div className="text-center">
+                        <HiOutlineExclamationCircle className=" mx-auto mb-4 h-14 w-14 text-gray-400 " />
+                        <h3 className="mb-5 text-lg font-normal text-gray-500 ">
+                            Are you sure you want to delete this Blog?
+                        </h3>
+                        <div className="flex justify-center gap-4">
+                            <Button
+                                color="failure"
+                                onClick={() => { deleteBlog() }}
+                            >
+                               
+                                Yes, I'm sure
+                            </Button>
+                            <Button
+                                color="gray"
+                                onClick={() => { setShowModal(false) }}
+                            >
+                                No, cancel
+                            </Button>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
+
+        </div>
+            
         </section>
     );
 }

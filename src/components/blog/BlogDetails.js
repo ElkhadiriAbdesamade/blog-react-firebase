@@ -48,7 +48,7 @@ const BlogDetails = () => {
                                         <img className="mr-4 w-32 h-32 rounded-full" src={`${blog.user.coverUrl}`} />
                                         <div>
                                             <a href="#" rel="author" className="text-2xl font-bold text-gray-900 dark:text-white">{blog.user.firstName} {blog.user.lastName}</a>
-                                            <p className="text-base font-light">Graphic Designer, educator & CEO Flowbite</p>
+                                            <p className="text-base font-light">{blog.user.profession}</p>
 
                                         </div>
                                     </div>
@@ -63,12 +63,13 @@ const BlogDetails = () => {
                                     <span className="text-[#999] dark:text-white">{blog.date_creation}</span>
                                 </div>
                             </header>
+                            <figure>
+                                <img src={`${blog.blogImg}`} alt="" className="rounded-xl mt-4 mb-6" />
+                            </figure>
                             <p className="lead">
                                 {blog.desc}.
                             </p>
-                            <figure>
-                                <img src={`${blog.blogImg}`} alt="" className="rounded-xl mt-4" />
-                            </figure>
+                           
                         </article>
                         <div id="comments" className="">
                             {blog && <Disqus.DiscussionEmbed

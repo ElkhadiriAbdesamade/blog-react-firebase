@@ -12,6 +12,7 @@ import { Button } from 'react-scroll';
 import AddBlog from './blog/AddBlog';
 import { useParams } from 'react-router-dom';
 import LoadingPage from './LodingPage';
+import MyBlogs from './blog/MyBlogs';
 
 const UserProfile = ({ darkMode, user }) => {
 
@@ -20,6 +21,7 @@ const UserProfile = ({ darkMode, user }) => {
     const [author, setAuthor] = useState();
     const [edit, setEdit] = useState(false);
     const [addBlog, setAddBlog] = useState(false);
+    const [showBlogs, setShowBlogs] = useState(false);
 
 
     const [blogCount, setBlogCount] = useState();
@@ -91,7 +93,7 @@ const UserProfile = ({ darkMode, user }) => {
 
     return (
         <div>
-            {!user && !author ? <LoadingPage/> :
+           
             <div>
              <section className="relative block h-500-px">
                 {!darkMode ? <div className="absolute sectionCover dark:sectionCover_dark top-0 w-full h-full bg-center bg-cover">
@@ -118,7 +120,7 @@ const UserProfile = ({ darkMode, user }) => {
                                             className="shadow-xl rounded-full  align-middle border-none absolute -m-16 -ml-20 lg:-ml-16  max-w-150-px" />
                                             :
                                             <img alt="..." src={imageUrl && `${imageUrl}`}
-                                                className="rounded-full sectionCover bg-center bg-cover shadow-xl align-middle 
+                                                className="rounded-full sectionCover bg-center bg-cover shadow-2xl align-middle 
                                                 w-[100px] h-[100px] md:w-[200px] md:h-[200px] border-none" />
                                         }
                                     </div>}
@@ -131,7 +133,7 @@ const UserProfile = ({ darkMode, user }) => {
                                     <div className="py-6 px-3 lg:mt-0 md:mt-8 mt-4 text-center">
 
                                         {user &&
-                                            <div>{!addBlog ? <button onClick={() => { setAddBlog(!addBlog); setEdit(false) }} className="bg-green-500 active:bg-green-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
+                                            <div>{!addBlog ? <button onClick={() => { setAddBlog(!addBlog); setEdit(false);setShowBlogs(false) }} className="bg-green-500 active:bg-green-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
                                                 <i className="fa-solid fa-add mr-2"></i>
                                                 Add Blog
                                             </button>
@@ -140,7 +142,7 @@ const UserProfile = ({ darkMode, user }) => {
                                                     <i className="fa-solid fa-close scale-150"></i>
                                                 </button>
                                             }
-                                                {!edit ? <button onClick={() => { setEdit(!edit); setAddBlog(false) }} className="bg-[#F79918] active:bg-[#c47a12] uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 ml-4 mb-1 ease-linear transition-all duration-150" type="button">
+                                                {!edit ? <button onClick={() => { setEdit(!edit); setAddBlog(false);setShowBlogs(false) }} className="bg-[#F79918] active:bg-[#c47a12] uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 ml-4 mb-1 ease-linear transition-all duration-150" type="button">
                                                     <i className="fa-solid fa-pen mr-2"></i>
                                                     Edit Profile
                                                 </button>
@@ -155,9 +157,12 @@ const UserProfile = ({ darkMode, user }) => {
                                 </div>
                                 <div className="w-full lg:w-4/12 px-4 lg:order-1">
                                     <div className="flex justify-center lg:py-4 lg:pt-4">
-                                        <div className="mr-4 p-3 text-center">
+                                        {user && <div  onClick={() => { setShowBlogs(!showBlogs); setEdit(false);setAddBlog(false) }} className="mr-4 p-3 text-center cursor-pointer shadow-lg rounded-lg">
                                             <span className="text-2xl font-bold block uppercase tracking-wide text-blueGray-600 dark:text-[#fff]">{blogCount}</span><span className="text-2xl text-blueGray-400 dark:text-gray-300">Blogs</span>
-                                        </div>
+                                        </div>}
+                                        {author && <div className="mr-4 p-3 text-center  shadow-lg rounded-lg">
+                                            <span className="text-2xl font-bold block uppercase tracking-wide text-blueGray-600 dark:text-[#fff]">{blogCount}</span><span className="text-2xl text-blueGray-400 dark:text-gray-300">Blogs</span>
+                                        </div>}
 
                                       
                                     </div>
@@ -166,7 +171,8 @@ const UserProfile = ({ darkMode, user }) => {
                             <div className="text-center lg:mt-12">
                                 {addBlog && < AddBlog user={user} darkMode={darkMode} />}
                                 {edit && < EditUserInfo user={user} />}
-                                {!edit && !addBlog &&
+                                {showBlogs && < MyBlogs user={user} />}
+                                {!edit && !addBlog && !showBlogs &&
                                     <div>
                                         <div>
                                             <h3 className="text-4xl font-semibold leading-normal text-blueGray-700 mb-2 dark:text-[#fff]">
@@ -218,7 +224,7 @@ const UserProfile = ({ darkMode, user }) => {
                 </div>
             </section>
             </div>
-            }
+            
         </div>
     );
 }

@@ -9,6 +9,7 @@ import { signOut } from "firebase/auth";
 import { Button, Dropdown } from 'flowbite-react';
 import { getDownloadURL, listAll, ref } from 'firebase/storage';
 import BreadCrumb from './BreadCrumb';
+import ErrorAlert from './ErrorAlert';
 
 
 const Navbar = ({ darkMode, setDarkMode, user }) => {
@@ -16,16 +17,31 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
 
     const imagesListRef = ref(storage, "images/");
     const [imageUrl, setImageUrl] = useState('');
+    const [search, setSearch] = useState('');
+    const [searchAlert, setSearchAlert] = useState('');
+
 
     const [showNav, setShowNav] = useState(false);
     //const [email, setEmail] = useState('');
+    const handleSearch = () => {
+        if (search) {
+            window.location.replace('/search/' + search)
+        } else {
+            setSearchAlert('Serrch Value Required');
+        }
+    }
+
+    const changeErrAlert = () => {
+        setSearchAlert('')
+
+    }
 
     const toggelNav = () => {
         setShowNav(!showNav);
     }
 
     const [year, setYear] = useState('');
-   
+
     const logOut = () => {
 
         signOut(auth).then(() => {
@@ -63,15 +79,19 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                     <div className="row">
                         <div className="col-md-6 text-center order-1 order-md-2 mb-3 mb-md-0">
                             <a href="/" className="text-3xl text-black dark:text-white font-bold  relative m-0 uppercase decoration-transparent">Blog Page</a>
-                            
+
                         </div>
                         <div className="order-3 col-md-3 order-md-1">
                             <div className="input-group rounded">
-                                <input type="search" className="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-                                <span className="input-group-text border-0" id="search-addon">
+                                <input onChange={(event) => { setSearch(event.target.value) }} type="search" className="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" required />
+                                <span onClick={() => { handleSearch() }} className="cursor-pointer input-group-text border-0" id="search-addon ">
+
+
                                     <i className="fas fa-search"></i>
+
                                 </span>
                             </div>
+                            {searchAlert && <ErrorAlert msg={searchAlert} setErr={changeErrAlert} />}
                         </div>
                         <div className="col-md-3 text-end order-2 order-md-3 mb-3 mb-md-0">
                             <div className="flex items-center">
@@ -87,7 +107,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                                         </Button>
                                     </li>}
                                     {user &&
-                                       
+
                                         <div>
                                             <Dropdown label="Menu" className={darkMode ? 'bg' : 'bg_l'}>
                                                 <Dropdown.Header>
@@ -122,7 +142,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                         </div>
                     </div>
                 </div>
-                <BreadCrumb/>
+                <BreadCrumb />
             </div>
             <div className={!showNav ? "bg-black h-screen text-white py-5 px-4 fixed top-0 right-[-100%] z-[100] w-full ease-in-out duration-1000"
                 : "bg-black h-screen text-white py-5 px-4 fixed top-0 right-0 w-[350px] z-[100] ease-in-out duration-1000 opacity-90"}>
@@ -139,18 +159,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                                 <i className="fa-solid fa-address-card mr-4"></i>
                                 My Profile</Link></li>
                         }
-                        <div className="btn-group ">
-                            <a className="nav-link dropdown-toggle text-white text-2xl font-bold cursor-pointer pl-0" href="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i className="fa-solid fa-list-dropdown mr-4"></i>
-                                Categories
-                            </a>
-                            <ul className="dropdown-menu w-full" aria-labelledby="navbarDropdown">
-                                <li><a className="dropdown-item" href="/">Travel</a></li>
-                                <li><a className="dropdown-item" href="/">Food</a></li>
-                                <li><a className="dropdown-item" href="/">Technology</a></li>
-                                <li><a className="dropdown-item" href="/">Business</a></li>
-                            </ul>
-                        </div>
+
                         {!user && <li className='text-2xl font-bold cursor-pointer '>
                             <Link onClick={toggelNav} className='hover:text-gray-400' to="/sign_in">Sign In</Link>
                         </li>}

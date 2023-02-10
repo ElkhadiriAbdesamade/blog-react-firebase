@@ -15,19 +15,23 @@ import UserProfile from "./components/UserProfile";
 import LoadingPage from "./components/LodingPage";
 import BlogDetails from "./components/blog/BlogDetails";
 import EditBlog from "./components/blog/EditBlog";
+import SearchBlog from "./components/blog/SearchBlog";
+
 
 
 function App() {
 
   const [darkMode, setDarkMode] = useState(true);
   const [user, setUser] = useState();
-  const [load,setLoad]=useState(true);
+
+ 
   const [blogs, setBlogs] = useState([]);
 
   const changeDark = () => {
     setDarkMode(!darkMode);
     //localStorage.setItem('darkMode',!darkMode);
   }
+
 
 
 
@@ -47,11 +51,11 @@ function App() {
         const data = await getDocs(q);
         setUser(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0]);
        
-        setLoad(false);
+     
       };
       getRole();
     }else{
-      setLoad(false);
+      
     }
 
     const blogsCollectionRef = collection(db, "blogs");
@@ -68,11 +72,13 @@ function App() {
   return (
     <div className={darkMode ? 'dark text-white ease-in-out duration-1000 ' : 'ease-in-out duration-1000 '}>
       <Router>
-      {load ? <LoadingPage/> : 
+      {!user && blogs.length===0 ? <LoadingPage/> : 
         <div className="dark:bg-[#474E68]">
           <Navbar darkMode={darkMode} setDarkMode={changeDark} user={user} />
           <Routes>
             <Route path='/' element={[<Trending key={'t'} />, <Post key={'p'} blogs={blogs} user={user}/>]} />
+            
+            <Route path="/search/:title" element={<SearchBlog user={user}/>} />
             <Route path="/Author/:id" element={<UserProfile darkMode={darkMode}/>} />
             <Route path="/Profile" element={<UserProfile darkMode={darkMode} user={user}/>} />
             <Route path="/blogDetails/:id" element={<BlogDetails darkMode={darkMode} user={user}/>} />
@@ -82,7 +88,7 @@ function App() {
             <Route path='/sign_up' element={<SignUp user={user}/>} />
             <Route path='*' element={<NotFound />} />
           </Routes>
-
+         
           <Footer />
           <BackToTop />
         </div>

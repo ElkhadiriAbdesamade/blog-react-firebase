@@ -205,7 +205,7 @@ const EditUserInfo = ({ user }) => {
         }
         let newFields;
         if (coverUrl !=='') {
-             newFields = { firstName: firstName, lastName: lastName, coverUrl: coverUrl, country: country, bio: bio };
+             newFields = { firstName: firstName, lastName: lastName,profession:profession,education:education, coverUrl: coverUrl, country: country, bio: bio };
         }
         else{
             newFields = { firstName: firstName, lastName: lastName,country: country, bio: bio };

@@ -73,8 +73,8 @@ const Trending = () => {
                                         </p>
                                         <div className="flex">
                                     <a href={`/Author/${blog.user.id}`} className="flex items-center">
-                                        <div className="flex-grow-0 flex-shrink-0 basis-11 mr-[10px]">
-                                            <img className="max-w-full rounded-full" src={`${blog.user.coverUrl}`} alt="Img" />
+                                        <div className="h-11 flex-grow-0 flex-shrink-0 basis-11 mr-[10px]">
+                                            <img className="h-11 max-w-full rounded-full" src={`${blog.user.coverUrl}`} alt="Img" />
                                         </div>
                                         <div className="flex flex-col items-start">
                                             <strong>{blog.user.firstName} {blog.user.lastName}</strong>

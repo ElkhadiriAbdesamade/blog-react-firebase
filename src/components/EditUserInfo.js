@@ -171,6 +171,7 @@ const EditUserInfo = ({ user }) => {
         setErrProfile('')
         let coverUrl = '';
         setLoadProfile(true);
+        console.log(firstName+'/'+ lastName+'/'+ country+'/'+ profession+'/'+ education+'/'+bio);
         if (firstName === '' || lastName === '' || country === '' || bio === '' || profession === '' || education === '') {
             setErrProfile('Please Fill in All Your Info !!');
             setLoadProfile(false);
@@ -348,8 +349,8 @@ const EditUserInfo = ({ user }) => {
                             <select className="bg-gray-50 border border-gray-300 text-black rounded focus:ring-blue-500 focus:border-blue-500 block w-full px-4 p-2.5"
                                 onChange={(event) => { setEducation(event.target.value) }}>
                                 {education ? <option selected={true}>{education}</option> :
-                                    <option defaultValue disabled>Choose your Education</option>}
-                                <option disabled>__________________________</option>
+                                    <option defaultValue>Choose your Education</option>}
+                                
                                 <option value='Master Degree'>Master Degree</option>
                                 <option value='License Degree'>License Degree</option>
                                 <option value='Bachelor Degree'>Bachelor</option>

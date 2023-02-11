@@ -72,7 +72,7 @@ function App() {
   return (
     <div className={darkMode ? 'dark text-white ease-in-out duration-1000 ' : 'ease-in-out duration-1000 '}>
       <Router>
-      {!user || !blogs ? <LoadingPage/> : 
+      {!user && !blogs ? <LoadingPage/> : 
         <div className="dark:bg-[#474E68]">
           <Navbar darkMode={darkMode} setDarkMode={changeDark} user={user} />
           <Routes>

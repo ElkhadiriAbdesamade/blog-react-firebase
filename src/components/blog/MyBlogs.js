@@ -1,13 +1,25 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from '@firebase/firestore'
+import { collection, getDocs, query, where ,doc,deleteDoc} from '@firebase/firestore'
 import { db } from "../../firebase-config";
 import { BsPencilSquare, BsChat } from 'react-icons/bs';
 import { FaTrashAlt } from 'react-icons/fa';
+import { Alert, Modal,Button } from "flowbite-react";
+import { HiOutlineExclamationCircle } from 'react-icons/hi'
+
 const MyBlogs = ({ user }) => {
     const [blogs, setBlogs] = useState([]);
 
+    const [showModal, setShowModal] = useState(false);
+    const [deletedBlogId, setDeletedBlogId] = useState();
+
+    const deleteBlog = async () => {
+        const blogDoc = doc(db, "blogs", deletedBlogId);
+        await deleteDoc(blogDoc);
+        window.location.replace('/Profile')
+    }
+
     useEffect(() => {
-        console.log(user)
+
         const blogsCollectionRef = collection(db, "blogs");
         const getBlogs = async () => {
             const q = query(blogsCollectionRef, where("user.email", "==", user.email));
@@ -19,11 +31,23 @@ const MyBlogs = ({ user }) => {
     }, [])
     return (
         <div>
-            <div className="mt-20">
+            <div className="mt-24">
                 <h1 className="text-5xl font-bold text-center">My Blogs</h1>
                 <div className="md:w-8/12 lg:ml-20 mx-auto">
                     <div id="t" className="mt-10 py-4 border-t border-blueGray-200 text-center"></div>
-
+                    {blogs.length === 0 && <div className="mb-52 py-10 px-10 mx-auto" >
+                        <Alert
+                            color="warning"
+                            withBorderAccent={true}
+                        >
+                            <span>
+                                <span className="font-medium">
+                                    Info alert!
+                                </span>
+                                {' '}<h1 className="text-3xl">There is no Blog at the moment.</h1>
+                            </span>
+                        </Alert>
+                    </div>}
                     <div className="grid  gap-4 lg:grid-cols-2 md:grid-cols-1 mb-52" >
                         {blogs.map((blog) => (
                             <div className="grid  p-1 rounded-xl shadow-lg pb-4 px-2" key={blog.id}>
@@ -57,10 +81,14 @@ const MyBlogs = ({ user }) => {
                                     <p className="text-left text-[#999] mb-4 dark:text-white">
                                         {blog.desc.substring(0, 100) + "..."}.
                                     </p>
-                                    <div className="flex">
+                                    <div className="flex justify-between">
                                         <a href={`/Author/${blog.user.id}`} className="flex items-center">
                                             <div className="flex-grow-0 flex-shrink-0 basis-11 mr-[10px]">
-                                                <img className="img max-w-full rounded-full" src={`${blog.user.coverUrl}`} alt="Img" />
+                                                {!blog.user.coverUrl ? <img alt="..." src={`https://api.dicebear.com/5.x/initials/svg?seed=${blog.user.firstName}"&backgroundColor=F79918`}
+                                                    className="h-11 max-w-full rounded-full" />
+                                                    :
+                                                    <img className="h-11 max-w-full rounded-full" src={`${blog.user.coverUrl}`} alt="Img" />
+                                                }
                                             </div>
                                             <div className="flex flex-col items-start">
                                                 <strong>{blog.user.firstName} {blog.user.lastName}</strong>
@@ -72,10 +100,10 @@ const MyBlogs = ({ user }) => {
                                                 <BsPencilSquare size={30} />
                                                 <span className="sr-only">Edit</span>
                                             </a>
-                                            <a href="/" className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 " title="Delete">
-                                                <FaTrashAlt size={30} />
-                                                <span className="sr-only">Delete</span>
-                                            </a>
+                                            <button onClick={() => { setShowModal(true);setDeletedBlogId(blog.id) }} className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 " title="Delete">
+                                            <FaTrashAlt size={30} />
+                                            <span className="sr-only">Delete</span>
+                                        </button>
                                         </div>}
                                     </div>
 
@@ -84,6 +112,41 @@ const MyBlogs = ({ user }) => {
                         ))}
 
                     </div>
+                </div>
+                <div>
+
+                    <Modal
+                        show={showModal}
+                        size="md"
+                        popup={true}
+                        onClick={() => { setShowModal(false) }}
+                    >
+                        <Modal.Header />
+                        <Modal.Body>
+                            <div className="text-center">
+                                <HiOutlineExclamationCircle className=" mx-auto mb-4 h-14 w-14 text-gray-400 " />
+                                <h3 className="mb-5 text-lg font-normal text-gray-500 ">
+                                    Are you sure you want to delete this Blog?
+                                </h3>
+                                <div className="flex justify-center gap-4">
+                                    <Button
+                                        color="failure"
+                                        onClick={() => { deleteBlog() }}
+                                    >
+
+                                        Yes, I'm sure
+                                    </Button>
+                                    <Button
+                                        color="gray"
+                                        onClick={() => { setShowModal(false) }}
+                                    >
+                                        No, cancel
+                                    </Button>
+                                </div>
+                            </div>
+                        </Modal.Body>
+                    </Modal>
+
                 </div>
             </div>
         </div>

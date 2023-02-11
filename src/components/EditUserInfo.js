@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
-import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, query, where } from '@firebase/firestore';
+import { collection, getDocs, updateDoc, doc, deleteDoc, query, where } from '@firebase/firestore';
 import { db, storage, auth } from '../firebase-config';
+import { deleteUser, signOut } from 'firebase/auth';
+
 import {
     getDownloadURL,
     ref,
@@ -12,15 +14,17 @@ import Loading from "./Loading";
 import { updateEmail, updatePassword } from "firebase/auth";
 import { Link } from "react-scroll";
 
+
 const EditUserInfo = ({ user }) => {
-    const usersCollectionRef = collection(db, "users");
+   
 
 
     const [imageUpload, setImageUpload] = useState(null);
     const [image, setImage] = useState('');
-    
 
 
+
+    const [id, setId] = useState('')
     const [email, setEmail] = useState('')
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
@@ -55,11 +59,13 @@ const EditUserInfo = ({ user }) => {
         setErrProfile('')
         setErrEmail('')
         setErrPsw('')
+        setErrDel('')
     }
     const changeSucAlert = () => {
         setSucProfile('')
         setSucEmail('')
         setSucPsw('')
+        setSucDel('')
     }
 
     const handleChangeImage = (e) => {
@@ -86,7 +92,7 @@ const EditUserInfo = ({ user }) => {
             });
     }
 
-    const update_Email = () => {
+    const update_Email =async () => {
         setErrEmail('');
         setSucEmail('');
         setLoadEmail(true);
@@ -95,6 +101,11 @@ const EditUserInfo = ({ user }) => {
             setLoadEmail(false);
             return;
         }
+        const userDoc = doc(db, "users", id);
+        const newFields = { email: email}
+        await updateDoc(userDoc, newFields)
+       
+
         const user = auth.currentUser;
         console.log(user);
         //reauthenticateWithCredential(auth.currentUser,auth)
@@ -103,6 +114,7 @@ const EditUserInfo = ({ user }) => {
             setSucEmail('Email updated successfully');
             setErrEmail('');
             setLoadEmail(false);
+            window.location.replace('/Profile')
             // ...
         }).catch((error) => {
             // An error occurred
@@ -115,7 +127,7 @@ const EditUserInfo = ({ user }) => {
         });
     }
 
-    const update_psw = () => {
+    const update_psw = async () => {
         setErrPsw('');
         setSucPsw('');
         setLoadPsw(true);
@@ -133,6 +145,7 @@ const EditUserInfo = ({ user }) => {
             return;
         }
 
+        
         const user = auth.currentUser;
         console.log(user);
         //reauthenticateWithCredential(auth.currentUser,auth)
@@ -141,6 +154,7 @@ const EditUserInfo = ({ user }) => {
             setSucPsw('Password updated successfully');
             setErrPsw('');
             setLoadPsw(false);
+            window.location.replace('/Profile')
             // ...
         }).catch((error) => {
             // An error occurred
@@ -153,11 +167,11 @@ const EditUserInfo = ({ user }) => {
         });
     }
 
-    const updatePersonalInfo = async () => {
+    const updatePersonalInfo =async () => {
         setErrProfile('')
-        let coverUrl='';
+        let coverUrl = '';
         setLoadProfile(true);
-        if (firstName === '' || lastName === '' || country === '' || bio === '' || profession==='' || education==='') {
+        if (firstName === '' || lastName === '' || country === '' || bio === '' || profession === '' || education === '') {
             setErrProfile('Please Fill in All Your Info !!');
             setLoadProfile(false);
             return;
@@ -176,43 +190,25 @@ const EditUserInfo = ({ user }) => {
                 return getDownloadURL(snapshot.ref)
             })
                 .then(downloadURL => {
-                    coverUrl=downloadURL;
+                    coverUrl = downloadURL;
                     console.log('Download URL', downloadURL)
-                }).catch((error) => {
-                    // A full list of error codes is available at
-                    // https://firebase.google.com/docs/storage/web/handle-errors
-                    switch (error.code) {
-                        case 'storage/unauthorized':
-                            // User doesn't have permission to access the object
-                            setErrProfile('User don`t have permission to access the object');
-                            setSucProfile('');
-                            setLoadProfile(false);
-                            break;
-                        case 'storage/canceled':
-                            // User canceled the upload
-                            setErrProfile('User canceled the upload');
-                            setSucProfile('');
-                            setLoadProfile(false);
-                            break;
-                        case 'storage/unknown':
-                            // Unknown error occurred, inspect error.serverResponse
-                            setErrProfile('Unknown error occurred, inspect error.serverResponse');
-                            setSucProfile('');
-                            setLoadProfile(false);
-                            break;
-                    }
+                }).catch(() => {
+                    setErrProfile('Error while uploading image');
+                    setSucProfile('');
+                    setLoadProfile(false);
+                    return;
                 });
         }
         let newFields;
-        if (coverUrl !=='') {
-             newFields = { firstName: firstName, lastName: lastName,profession:profession,education:education, coverUrl: coverUrl, country: country, bio: bio };
+        if (coverUrl !== '') {
+            newFields = { firstName: firstName, lastName: lastName, profession: profession, education: education, coverUrl: coverUrl, country: country, bio: bio };
         }
-        else{
-            newFields = { firstName: firstName, lastName: lastName,country: country, bio: bio };
+        else {
+            newFields = { firstName: firstName, lastName: lastName, country: country, profession: profession, education: education, bio: bio };
         }
 
         const userDoc = doc(db, "users", user.id);
-       
+
         await updateDoc(userDoc, newFields)
         setSucProfile('Info updated successfully');
         setErrProfile('');
@@ -220,18 +216,62 @@ const EditUserInfo = ({ user }) => {
         window.location.replace('/Profile')
     };
 
-    const delete_account = () => {
+    const delete_account = async () => {
+        setErrDel('')
+        setSucDel('');
+        setLoadDel(true);
         //delete user Info from fireStore
+       
+        const userDoc = doc(db, "users", id);
+        await deleteDoc(userDoc);
 
-        //delete user Account from fireBase Authentication
+        ////////////////delete user Blogs///////////////////////
+        const blogsCollectionRef = collection(db, "blogs");
+        const q = query(blogsCollectionRef, where("user.email", "==", email));
+        const data = await getDocs(q);
+        const userBlogs = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        for (let i = 0; i < userBlogs.length; i++) {
+            const elementId = userBlogs[i].id;
+            console.log(elementId);
+            const blogDoc = doc(db, "blogs", elementId);
+            await deleteDoc(blogDoc);
+        }
 
-        //delete user Image from storage 
+        ///////////////delete user Account from fireBase Authentication/////////////
+        const user = auth.currentUser;
+        await deleteUser(user).then(() => {
+            // User deleted.
+        }).catch((error) => {
+            // An error ocurred
+            console.log(error);
+            setErrDel('error ');
+            setSucDel('');
+            setLoadDel(false);
+            return;
+        });
 
-        //delete user Blogs
+        await signOut(auth).then(() => {
+            sessionStorage.setItem('email', "");
+        }).catch((error) => {
+            console.log(error);
+            setErrDel('error ');
+            setSucDel('');
+            setLoadDel(false);
+            return;
+        });
+
+
+        setErrDel('');
+        setLoadDel(false);
+        setSucDel('Account Deleted successfully');
+        
+        window.location.replace('/')
 
     }
 
     useEffect(() => {
+       
+        setId(user.id)
         setFirstName(user.firstName)
         setLastName(user.lastName)
         setEmail(user.email)
@@ -244,7 +284,7 @@ const EditUserInfo = ({ user }) => {
     }, [])
 
     return (
-        <div className="mt-8">
+        <div className="mt-24">
             <h1 className="text-5xl font-bold text-center">Edit Profile</h1>
             <div className="md:w-8/12 lg:ml-20 mx-auto">
                 <div id="t" className="mt-10 py-4 border-t border-blueGray-200 text-center">
@@ -268,7 +308,7 @@ const EditUserInfo = ({ user }) => {
                                 />
                             </div>
                             <div className="flex flex-col items-start w-full
-                            ">                        
+                            ">
                                 <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Last Name :</h3>
                                 <input
                                     type="text"
@@ -280,7 +320,7 @@ const EditUserInfo = ({ user }) => {
                             </div>
                         </div>
                         <div className="flex flex-col items-start w-full
-                            ">                           
+                            ">
                             <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Country :</h3>
                             <div className="mb-6 w-full">
                                 <select id="countries" className="bg-gray-50 border px-4 border-gray-300 text-black rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -294,7 +334,7 @@ const EditUserInfo = ({ user }) => {
                             </div>
                         </div>
                         <div className="mb-6 flex flex-col items-start w-full">
-                        <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Profession :</h3>
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Profession :</h3>
                             <input
                                 type="text"
                                 className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -304,20 +344,21 @@ const EditUserInfo = ({ user }) => {
                             />
                         </div>
                         <div className="mb-6 flex flex-col items-start w-full">
-                        <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Education :</h3>
-                                <select className="bg-gray-50 border border-gray-300 text-black rounded focus:ring-blue-500 focus:border-blue-500 block w-full px-4 p-2.5"
-                                    onChange={(event) => { setEducation(event.target.value) }}>
-                                    <option selected={true}>{education}</option>
-                                    <option disabled>__________________________</option>
-                                    <option  value='Master Degree'>Master Degree</option>
-                                    <option value='License Degree'>License Degree</option>
-                                    <option value='Bachelor Degree'>Bachelor</option>
-                                </select>
-                           
-                            
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Education :</h3>
+                            <select className="bg-gray-50 border border-gray-300 text-black rounded focus:ring-blue-500 focus:border-blue-500 block w-full px-4 p-2.5"
+                                onChange={(event) => { setEducation(event.target.value) }}>
+                                {education ? <option selected={true}>{education}</option> :
+                                    <option defaultValue disabled>Choose your Education</option>}
+                                <option disabled>__________________________</option>
+                                <option value='Master Degree'>Master Degree</option>
+                                <option value='License Degree'>License Degree</option>
+                                <option value='Bachelor Degree'>Bachelor</option>
+                            </select>
+
+
                         </div>
                         <div className="flex flex-col items-start w-full
-                            ">                  
+                            ">
                             <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">your Bio :</h3>
                             <div className="mb-6 w-full">
                                 <textarea className="form-control w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -372,7 +413,7 @@ const EditUserInfo = ({ user }) => {
                             {loadEmail && <Loading />}
                         </div>
                         <div className="mb-6 flex flex-col items-start w-full">
-                        <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Email address :</h3>
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Email address :</h3>
                             <input
                                 type="text"
                                 className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -394,7 +435,7 @@ const EditUserInfo = ({ user }) => {
                             {loadPsw && <Loading />}
                         </div>
                         <div className="mb-6 flex flex-col items-start w-full">
-                        <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Password :</h3>
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Password :</h3>
                             <input
                                 type="password"
                                 className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -403,7 +444,7 @@ const EditUserInfo = ({ user }) => {
                             />
                         </div>
                         <div className="mb-6 flex flex-col items-start w-full">
-                        <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Confirm Password :</h3>
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Confirm Password :</h3>
                             <input
                                 type="password"
                                 className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none "

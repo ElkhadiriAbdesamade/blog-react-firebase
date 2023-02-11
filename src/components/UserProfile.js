@@ -2,16 +2,11 @@ import { collection, getDocs, query, where,getCountFromServer } from '@firebase/
 import { useEffect, useState } from 'react';
 import EditUserInfo from './EditUserInfo';
 
-import { db, storage } from '../firebase-config';
-import {
-    ref,
-    getDownloadURL,
-    listAll,
-} from "firebase/storage";
-import { Button } from 'react-scroll';
+import { db } from '../firebase-config';
+
 import AddBlog from './blog/AddBlog';
 import { useParams } from 'react-router-dom';
-import LoadingPage from './LodingPage';
+
 import MyBlogs from './blog/MyBlogs';
 
 const UserProfile = ({ darkMode, user }) => {
@@ -29,6 +24,8 @@ const UserProfile = ({ darkMode, user }) => {
 
 
     useEffect(() => {
+        console.log(user);
+       
         const usersCollectionRef = collection(db, "users");
         const blogsCollectionRef = collection(db, "blogs");
         if (user) {
@@ -120,7 +117,7 @@ const UserProfile = ({ darkMode, user }) => {
                                             className="shadow-xl rounded-full  align-middle border-none absolute -m-16 -ml-20 lg:-ml-16  max-w-150-px" />
                                             :
                                             <img alt="..." src={imageUrl && `${imageUrl}`}
-                                                className="rounded-full sectionCover bg-center bg-cover shadow-2xl align-middle 
+                                                className="rounded-full sectionCover bg-center bg-cover object-cover shadow-2xl align-middle 
                                                 w-[100px] h-[100px] md:w-[200px] md:h-[200px] border-none" />
                                         }
                                     </div>}

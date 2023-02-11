@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc, getDocs, query, where } from '@firebase/firestore'
+import { collection, addDoc } from '@firebase/firestore'
 import { auth, db } from '../firebase-config';
 import { useNavigate } from "react-router-dom";
 import ErrorAlert from "./ErrorAlert";
@@ -30,7 +30,7 @@ const SignUp = ({user}) => {
     }
     const navigate = useNavigate();
     const usersCollectionRef = collection(db, "users");
-    let cUser = { email: email, firstName: firstName, lastName: lastName, country: country,user_name:userName, bio: '', role: "user" }
+    let cUser = { email: email, firstName: firstName, lastName: lastName, country: country,profession:'',education:'', bio: '', role: "user" }
     const addUser = async () => {
         await addDoc(usersCollectionRef, cUser);
     };
@@ -72,8 +72,7 @@ const SignUp = ({user}) => {
                 setSuc('Signed in ');
                 setErr('');
                 setLoad(false);
-                sessionStorage.setItem('email', email)
-                window.location.replace('/sign_in')
+                navigate('/sign_in')
                 // ...
             })
             .catch((error) => {
@@ -197,23 +196,7 @@ const SignUp = ({user}) => {
                                 Sign Up
                             </button>
 
-                            <div
-                                className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5 w-full"
-                            >
-                                <p className="text-center font-semibold mx-4 mb-0 dark:text-white">OR</p>
-                            </div>
-
-                            <a
-                                className="px-7 py-3 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full flex justify-center items-center mb-3 bg-[#fa2b2b]"
-
-                                href="/"
-                                role="button"
-                                data-mdb-ripple="true"
-                                data-mdb-ripple-color="light"
-                            >
-
-                                <span className="mr-4"><i className="fa-brands fa-google"></i></span>Continue with Google
-                            </a>
+                          
                             <div
                                 className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5 w-full"
                             >

@@ -5,7 +5,7 @@ import ErrorAlert from "../ErrorAlert";
 import Loading from "../Loading";
 import SuccessAlert from "../SuccessAlert";
 
-import { collection, addDoc, getDocs, query, where } from '@firebase/firestore'
+import { collection, addDoc} from '@firebase/firestore'
 import {  useNavigate } from "react-router-dom";
 import { Link } from "react-scroll";
 import uuid from 'react-uuid';
@@ -127,7 +127,7 @@ const AddBlog = ({ user }) => {
     }, [])
 
     return (
-        <div className="mt-8">
+        <div className="mt-24">
             <h1 className="text-5xl font-bold text-center">Add Blog</h1>
             <div className="md:w-8/12 lg:ml-20 mx-auto">
                 <div id="t" className="mt-10 py-4 border-t border-blueGray-200 text-center">

@@ -10,12 +10,7 @@ const BlogDetails = () => {
     
     const disqusShortname = "http-localhost-3000-4eq1x2maft";
     let disqusConfig;
-    // const disqusConfig = {
-    //     url: "http://localhost:3000",
-    //     identifier: id,
-    //     title: blog.title
-    // }
-
+ 
     useEffect(() => {
         console.log(id);
 

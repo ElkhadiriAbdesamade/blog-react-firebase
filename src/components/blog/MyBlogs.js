@@ -31,9 +31,9 @@ const MyBlogs = ({ user }) => {
     }, [])
     return (
         <div>
-            <div className="mt-24">
-                <h1 className="text-5xl font-bold text-center">My Blogs</h1>
-                <div className="md:w-8/12 lg:ml-20 mx-auto">
+            <div className="mt-16">
+                <h1 className="text-5xl font-bold text-center">Blogs</h1>
+                <div className="md:w-full lg:ml-20 mx-auto">
                     <div id="t" className="mt-10 py-4 border-t border-blueGray-200 text-center"></div>
                     {blogs.length === 0 && <div className="mb-52 py-10 px-10 mx-auto" >
                         <Alert
@@ -49,7 +49,7 @@ const MyBlogs = ({ user }) => {
                             </span>
                         </Alert>
                     </div>}
-                    <div className="grid  gap-4 lg:grid-cols-2 md:grid-cols-1 mb-52" >
+                    <div className="grid  gap-4 lg:grid-cols-3 md:grid-cols-2 mb-52" >
                         {blogs.map((blog) => (
                             <div className="grid  p-1 rounded-xl shadow-lg pb-4 px-2" key={blog.id}>
                                 <div className="mb-4">
@@ -60,9 +60,7 @@ const MyBlogs = ({ user }) => {
                                 <div className="self-center text-[14px]">
                                     <div className="flex justify-between items-center mb-3">
                                         <div className="mb-4 text-left " >
-                                            {blog.category.map((cat) => (
-                                                <span className="font-bold text-[#222] dark:text-white" href="/" key={cat}>{cat},&nbsp;</span>
-                                            ))}
+                                        <span className="font-bold text-[#222] dark:text-white">{blog.category}&nbsp;</span>
                                             &nbsp;<span className="text-[#999]">—</span>&nbsp;
                                             <span className="text-[#999] dark:text-white">{blog.date_creation}</span>
                                         </div>

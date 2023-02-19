@@ -1,9 +1,9 @@
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { db, storage } from "../../firebase-config";
-import ErrorAlert from "../ErrorAlert";
-import Loading from "../Loading";
-import SuccessAlert from "../SuccessAlert";
+import ErrorAlert from "../Alerts/ErrorAlert";
+import Loading from "../Alerts/Loading";
+import SuccessAlert from "../Alerts/SuccessAlert";
 
 import { collection, addDoc} from '@firebase/firestore'
 import {  useNavigate } from "react-router-dom";
@@ -22,7 +22,7 @@ const AddBlog = ({ user }) => {
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
     //const [user, setUser] = useState([]);
-    const [category, setCategory] = useState([]);
+    const [category, setCategory] = useState('');
     const [imageUpload, setImageUpload] = useState(null);
 
     //const [user, setEmail] = useState('');
@@ -47,7 +47,7 @@ const AddBlog = ({ user }) => {
         setErr('')
         let coverUrl;
         setLoad(true);
-        if (title === '' || desc === '' || category === [] || imageUpload === null) {
+        if (title === '' || desc === '' || category === '' || imageUpload === null) {
             setErr('Please Fill All Blog Info !!');
             setLoad(false);
             return;
@@ -114,14 +114,10 @@ const AddBlog = ({ user }) => {
         setErr('');
         setLoad(false);
         window.location.replace('/')
+    
     }
 
-    function arrayRemove(arr, value) {
-        setCategory(arr.filter((geeks) => {
-            return geeks !== value;
-        }));
-    }
-
+   
     useEffect(() => {
        //console.log(user);
     }, [])
@@ -185,41 +181,24 @@ const AddBlog = ({ user }) => {
                                 </textarea>
                             </div>
                         </div>
-                        {/* //MultiSelect Dropdown */}
+                
                         <div className="flex flex-col items-start w-full mb-6">
                             <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Categories :</h3>
-                            <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
-                                <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                    <div className="flex items-center pl-3 hover:bg-slate-200 ">
-                                        <input id="Travel-checkbox-list" type="checkbox" value="Travel" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 focus:ring-2 "
-                                            onChange={(event) => { event.target.checked ? setCategory(category.concat(event.target.value)) : arrayRemove(category, event.target.value) }} />
-                                        <label htmlFor="Travel-checkbox-list" className="w-full py-3 ml-2 text-sm font-medium text-gray-900">Travel</label>
-                                    </div>
-                                </li>
-                                <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                    <div className="flex items-center pl-3 hover:bg-slate-200">
-                                        <input id="Food-checkbox-list" type="checkbox" value="Food" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 focus:ring-2 "
-                                            onChange={(event) => { event.target.checked ? setCategory(category.concat(event.target.value)) : arrayRemove(category, event.target.value) }} />
-                                        <label htmlFor="Food-checkbox-list" className="w-full py-3 ml-2 text-sm font-medium text-gray-900">Food</label>
-                                    </div>
-                                </li>
-                                <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                    <div className="flex items-center pl-3 hover:bg-slate-200">
-                                        <input id="Technology-checkbox-list" type="checkbox" value="Technology" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 focus:ring-2 "
-                                            onChange={(event) => { event.target.checked ? setCategory(category.concat(event.target.value)) : arrayRemove(category, event.target.value) }} />
-                                        <label htmlFor="Technology-checkbox-list" className="w-full py-3 ml-2 text-sm font-medium text-gray-900">Technology</label>
-                                    </div>
-                                </li>
-                                <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                    <div className="flex items-center pl-3 hover:bg-slate-200">
-                                        <input id="Business-checkbox-list" type="checkbox" value="Business" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 focus:ring-2 "
-                                            onChange={(event) => { event.target.checked ? setCategory(category.concat(event.target.value)) : arrayRemove(category, event.target.value) }} />
-                                        <label htmlFor="Business-checkbox-list" className="w-full py-3 ml-2 text-sm font-medium text-gray-900">Business</label>
-                                    </div>
-                                </li>
+                           
+                            <select className="bg-gray-50 border border-gray-300 text-black rounded focus:ring-blue-500 focus:border-blue-500 block w-full px-4 p-2.5"
+                                onChange={(event) => { setCategory(event.target.value) }}>
+                                {/* {education ? <option selected={true}>{education}</option> : */}
+                                    <option defaultValue>Choose Blog Category</option>
+                                
+                                <option value='Food'>Food</option>
+                                <option value='Travel'>Travel</option>
+                                <option value='Technology'>Technology</option>
+                                <option value='Business'>Business</option>
+                            </select>
 
-                            </ul>
 
+                    
+                           
 
 
                         </div>

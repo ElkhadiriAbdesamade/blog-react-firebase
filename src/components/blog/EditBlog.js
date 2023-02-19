@@ -1,9 +1,9 @@
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { db, storage } from "../../firebase-config";
-import ErrorAlert from "../ErrorAlert";
-import Loading from "../Loading";
-import SuccessAlert from "../SuccessAlert";
+import ErrorAlert from "../Alerts/ErrorAlert";
+import Loading from "../Alerts/Loading";
+import SuccessAlert from "../Alerts/SuccessAlert";
 
 import { collection, updateDoc,doc, getDocs, query, where } from '@firebase/firestore'
 import { useNavigate, useParams } from "react-router-dom";
@@ -142,7 +142,7 @@ const EditBlog = ({ user }) => {
             
         };
         getBlog();
-        //console.log(blog);
+        console.log(category);
 
     }, [])
 
@@ -184,31 +184,26 @@ const EditBlog = ({ user }) => {
                                     </textarea>
                                 </div>
                             </div>
-                            {/* //MultiSelect Dropdown */}
                             <div className="flex flex-col items-start w-full mb-6">
-                                <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Categories :</h3>
-                                <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
-                                    {arrayCat.map((cat, i) => (
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Categories :</h3>
+                           
+                            <select className="bg-gray-50 border border-gray-300 text-black rounded focus:ring-blue-500 focus:border-blue-500 block w-full px-4 p-2.5"
+                                onChange={(event) => { setCategory(event.target.value) }}>
+                                 <option defaultValue={true}>{category}</option>
+                                  
+                                
+                                <option value='Food'>Food</option>
+                                <option value='Travel'>Travel</option>
+                                <option value='Technology'>Technology</option>
+                                <option value='Business'>Business</option>
+                            </select>
 
-                                        <li key={cat} className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
 
-                                            {category[i] === cat ? <div className="flex items-center pl-3 hover:bg-slate-200 ">
+                    
+                           
 
-                                                <input id={cat} checked type="checkbox" value={cat} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 focus:ring-2 "
-                                                    onChange={(event) => { event.target.checked ? setCategory(category.concat(event.target.value)) : arrayRemove(category, event.target.value) }} />
-                                                <label htmlFor={cat} className="w-full py-3 ml-2 text-sm font-medium text-gray-900">{cat}</label>
-                                            </div> :
-                                                <div className="flex items-center pl-3 hover:bg-slate-200 ">
 
-                                                    <input id={cat} type="checkbox" value={cat} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 focus:ring-2 "
-                                                        onChange={(event) => { event.target.checked ? setCategory(category.concat(event.target.value)) : arrayRemove(category, event.target.value) }} />
-                                                    <label htmlFor={cat} className="w-full py-3 ml-2 text-sm font-medium text-gray-900">{cat}</label>
-                                                </div>
-                                            }
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                        </div>
                             {/* ///////////////// */}
                             < div className="flex flex-col items-start w-full">
                                 <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Blog Image :</h3>

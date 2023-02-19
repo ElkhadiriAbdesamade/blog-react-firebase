@@ -11,7 +11,7 @@ import "swiper/css/navigation";
 // import required modules
 import { Autoplay, Pagination, Navigation } from "swiper";
 import { useEffect, useState } from "react";
-import { db } from "../firebase-config";
+import { db } from "../../firebase-config";
 import { Alert } from "flowbite-react";
 
 const Trending = () => {
@@ -70,15 +70,14 @@ const Trending = () => {
                             <SwiperSlide key={blog.id}>
                                 <div className="grid lg:grid-flow-col dark:bg-[#50577A] p-8 w-full md:h-[700px] lg:h-[500px]">
                                     <div className="inline-grid md:mr-8 ">
-                                        <a href="/">
-                                            <img src={`${blog.blogImg}`} style={{ height: "400px !important" }} alt="Img" className="w-[400px] rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
-                                        </a>
+                                        <div className="relative">
+                                            <img src={`${blog.blogImg}`} alt="Img" className=" imgBlog sectionCover bg-center bg-cover object-cover  align-middle 
+                                            w-[100px] h-[100px] md:w-[150px] md:h-[150px]  border-none rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
+                                        </div>
                                     </div>
                                     <div className="self-center text-[14px] inline-grid w-full">
                                         <div className="mb-4 text-left " >
-                                            {blog.category.map((cat) => (
-                                                <span className="font-bold text-[#222] dark:text-white" key={cat}>{cat},&nbsp;</span>
-                                            ))}
+                                        <span className="font-bold text-[#222] dark:text-white">{blog.category}&nbsp;</span>
                                             &nbsp;<span className="text-[#999]">—</span>&nbsp;
                                             <span className="text-[#999] dark:text-white">{blog.date_creation}</span>
                                         </div>

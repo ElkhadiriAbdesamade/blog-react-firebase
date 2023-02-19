@@ -118,4 +118,6 @@ a:hover{
 [x-cloak] {
   display: none;
 }
-
+.swiper-slide .imgBlog{
+  height: 450px ;
+}

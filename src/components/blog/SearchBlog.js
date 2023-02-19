@@ -12,16 +12,31 @@ import LoadingPage from '../LoadingPage';
 
 const SearchBlog = () => {
     const [blogs, setBlogs] = useState([]);
-    const { title } = useParams()
+    const { elm } = useParams()
     useEffect(() => {
+
         const blogsCollectionRef = collection(db, "blogs");
-        const getBlogs = async () => {
-            const q = query(blogsCollectionRef, where("title", ">=", title),where("title", "<=", title + "\uf8ff"));
-            const data = await getDocs(q);
-            setBlogs(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-            console.log(title);
-        };
-        getBlogs();
+
+        if (elm === 'Food' || elm === 'Travel' || elm === 'Technology' || elm === 'Business') {
+            const getBlogsByCat = async () => {
+                const q = query(blogsCollectionRef, where("category", "==", elm));
+                const data = await getDocs(q);
+                setBlogs(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+                console.log(elm);
+            };
+            getBlogsByCat();
+            return;
+        }else{
+            const getBlogs = async () => {
+                const q = query(blogsCollectionRef, where("title", ">=", elm),where("title", "<=", elm + "\uf8ff"));
+                const data = await getDocs(q);
+                setBlogs(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+                console.log(elm);
+            };
+            getBlogs();
+        }
+       
+       
     }, [])
 
     return (
@@ -58,9 +73,7 @@ const SearchBlog = () => {
                             <div className="self-center text-[14px]">
                                 <div className="flex justify-between items-center mb-3">
                                     <div className="mb-4 text-left " >
-                                        {blog.category.map((cat) => (
-                                            <span className="font-bold text-[#222] dark:text-white" href="/" key={cat}>{cat},&nbsp;</span>
-                                        ))}
+                                    <span className="font-bold text-[#222] dark:text-white">{blog.category}&nbsp;</span>
                                         &nbsp;<span className="text-[#999]">—</span>&nbsp;
                                         <span className="text-[#999] dark:text-white">{blog.date_creation}</span>
                                     </div>

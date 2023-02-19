@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, addDoc } from '@firebase/firestore'
-import { auth, db } from '../firebase-config';
+import { auth, db } from '../../firebase-config';
 import { useNavigate } from "react-router-dom";
-import ErrorAlert from "./ErrorAlert";
-import SuccessAlert from "./SuccessAlert";
-import Loading from "./Loading";
+import ErrorAlert from "../Alerts/ErrorAlert";
+import SuccessAlert from "../Alerts/SuccessAlert";
+import Loading from "../Alerts/Loading";
 
 
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { collection, getDocs, updateDoc, doc, deleteDoc, query, where } from '@firebase/firestore';
-import { db, storage, auth } from '../firebase-config';
+import { db, storage, auth } from '../../firebase-config';
 import { deleteUser, signOut } from 'firebase/auth';
 
 import {
@@ -8,9 +8,9 @@ import {
     ref,
     uploadBytes,
 } from "firebase/storage";
-import ErrorAlert from "./ErrorAlert";
-import SuccessAlert from "./SuccessAlert";
-import Loading from "./Loading";
+import ErrorAlert from "../Alerts/ErrorAlert";
+import SuccessAlert from "../Alerts/SuccessAlert";
+import Loading from "../Alerts/Loading";
 import { updateEmail, updatePassword } from "firebase/auth";
 import { Link } from "react-scroll";
 
@@ -201,16 +201,33 @@ const EditUserInfo = ({ user }) => {
                 });
         }
         let newFields;
+        let newFieldsBlogUser;
         if (coverUrl !== '') {
-            newFields = { firstName: firstName, lastName: lastName, profession: profession, education: education, coverUrl: coverUrl, country: country, bio: bio };
+            newFields = { firstName: firstName,email:email,id:id, lastName: lastName, profession: profession, education: education, coverUrl: coverUrl, country: country, bio: bio };
+
+            newFieldsBlogUser = { user:newFields};
+
         }
         else {
-            newFields = { firstName: firstName, lastName: lastName, country: country, profession: profession, education: education, bio: bio };
+            newFields = { firstName: firstName,email:email,id:id, lastName: lastName, country: country, profession: profession, education: education, bio: bio };
+            newFieldsBlogUser = { user:newFields};
         }
 
         const userDoc = doc(db, "users", user.id);
-
         await updateDoc(userDoc, newFields)
+
+        const blogsCollectionRef = collection(db, "blogs");
+        const q = query(blogsCollectionRef, where("user.email", "==", email));
+        const data = await getDocs(q);
+        const userBlogs = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        for (let i = 0; i < userBlogs.length; i++) {
+            const elementId = userBlogs[i].id;
+            console.log(elementId);
+            const blogUserDoc = doc(db, "blogs", elementId);
+            await updateDoc(blogUserDoc, newFieldsBlogUser)
+        }
+
+        
         setSucProfile('Info updated successfully');
         setErrProfile('');
         setLoadProfile(false);

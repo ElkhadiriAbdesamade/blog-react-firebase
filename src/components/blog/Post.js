@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { doc, deleteDoc } from '@firebase/firestore'
 import { BsPencilSquare, BsChat } from 'react-icons/bs';
 import { FaTrashAlt } from 'react-icons/fa';
-import { db } from "../firebase-config";
+import { db } from "../../firebase-config";
 
 
 import { Alert, Button, Modal } from "flowbite-react";
@@ -59,9 +59,9 @@ const Post = ({ blogs, user }) => {
                             <div className="self-center text-[14px]">
                                 <div className="flex justify-between items-center mb-3">
                                     <div className="mb-4 text-left " >
-                                        {blog.category.map((cat) => (
-                                            <span className="font-bold text-[#222] dark:text-white" href="/" key={cat}>{cat},&nbsp;</span>
-                                        ))}
+                                      
+                                            <span className="font-bold text-[#222] dark:text-white">{blog.category}&nbsp;</span>
+                                    
                                         &nbsp;<span className="text-[#999]">—</span>&nbsp;
                                         <span className="text-[#999] dark:text-white">{blog.date_creation}</span>
                                     </div>

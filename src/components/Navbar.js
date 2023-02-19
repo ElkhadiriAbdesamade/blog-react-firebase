@@ -9,7 +9,7 @@ import { signOut } from "firebase/auth";
 import { Button, Dropdown } from 'flowbite-react';
 import { getDownloadURL, listAll, ref } from 'firebase/storage';
 import BreadCrumb from './BreadCrumb';
-import ErrorAlert from './ErrorAlert';
+import ErrorAlert from './Alerts/ErrorAlert';
 
 
 const Navbar = ({ darkMode, setDarkMode, user }) => {
@@ -24,7 +24,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
     const [showNav, setShowNav] = useState(false);
     //const [email, setEmail] = useState('');
     const handleSearch = () => {
-        if (search!=='') {
+        if (search !== '') {
             window.location.replace('/search/' + search)
         } else {
             setSearchAlert('Serrch Value Required');
@@ -52,7 +52,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
         });
 
     }
-   
+
     useEffect(() => {
         listAll(imagesListRef).then((response) => {
             response.items.forEach((item) => {
@@ -158,6 +158,37 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
                                 <i className="fa-solid fa-address-card mr-4"></i>
                                 My Profile</Link></li>
                         }
+
+                        <Dropdown
+                            label="Search By Category"
+                            inline={true}
+                        >
+                            <a href="/search/Food" >
+                                <Dropdown.Item>
+                                    <span className='text-black'>Food</span>
+                                    
+
+                                </Dropdown.Item>
+                            </a>
+                            <a href="/search/Travel">
+                                <Dropdown.Item>
+                                <span className='text-black'> Travel</span>
+
+                                </Dropdown.Item>
+                            </a>
+                            <a href="/search/Technology">
+                                <Dropdown.Item>
+                                <span className='text-black'> Technology</span>
+
+                                </Dropdown.Item>
+                            </a>
+                            <a href="/search/Business">
+                                <Dropdown.Item>
+                                <span className='text-black'> Business</span>
+
+                                </Dropdown.Item>
+                            </a>
+                        </Dropdown>
 
                         {!user && <li className='text-2xl font-bold cursor-pointer '>
                             <Link onClick={toggelNav} className='hover:text-gray-400' to="/sign_in">Sign In</Link>

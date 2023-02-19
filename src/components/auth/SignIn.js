@@ -1,11 +1,11 @@
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { useEffect, useState } from "react";
 
-import { auth } from '../firebase-config';
+import { auth } from '../../firebase-config';
 import { useNavigate } from "react-router-dom";
-import ErrorAlert from "./ErrorAlert";
-import SuccessAlert from "./SuccessAlert";
-import Loading from "./Loading";
+import ErrorAlert from "../Alerts/ErrorAlert";
+import SuccessAlert from "../Alerts/SuccessAlert";
+import Loading from "../Alerts/Loading";
 
 
 const SignIn = ({user}) => {

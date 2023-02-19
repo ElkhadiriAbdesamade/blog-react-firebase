@@ -2,17 +2,18 @@ import { collection, getDocs, query, where, getCountFromServer } from '@firebase
 import { useEffect, useState } from 'react';
 import EditUserInfo from './EditUserInfo';
 
-import { db } from '../firebase-config';
+import { db } from '../../firebase-config';
 
-import AddBlog from './blog/AddBlog';
+import AddBlog from '../blog/AddBlog';
 import { useParams } from 'react-router-dom';
 
-import MyBlogs from './blog/MyBlogs';
+import MyBlogs from '../blog/MyBlogs';
 
 const UserProfile = ({ darkMode, user }) => {
 
     //const imagesListRef = ref(storage, "images/");
     const [imageUrl, setImageUrl] = useState('');
+    const [imageUrlAu, setImageUrlAu] = useState('');
     const [author, setAuthor] = useState();
     const [edit, setEdit] = useState(false);
     const [addBlog, setAddBlog] = useState(false);
@@ -48,7 +49,7 @@ const UserProfile = ({ darkMode, user }) => {
                 const data = await getDocs(q);
                 var u = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0];
                 setAuthor(u);
-                setImageUrl(u.coverUrl)
+                setImageUrlAu(u.coverUrl)
 
                 //get count of blogs by user email
                 const q2 = query(blogsCollectionRef, where("user.email", "==", u.email));
@@ -60,31 +61,7 @@ const UserProfile = ({ darkMode, user }) => {
 
 
         }
-        // let email = sessionStorage.getItem("email")
-
-        // if (email !== "") {
-        //     const usersCollectionRef = collection(db, "users");
-        //     const getUser = async () => {
-
-        //         const q = query(usersCollectionRef, where("email", "==", email));
-        //         const data = await getDocs(q);
-        //         var u = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0];
-        //         setUser(u);
-        //         setImageUrl(u.coverUrl)
-
-        //         // listAll(imagesListRef).then((response) => {
-        //         //     response.items.forEach((item) => {
-        //         //         if (item.name === u.id) {
-        //         //             getDownloadURL(item).then((url) => {
-        //         //                 setImageUrl(url);
-        //         //             });
-        //         //         }
-        //         //     });
-
-        //         // });
-        //     };
-        //     getUser();
-        // }
+       
 
     }, [user]);
 
@@ -113,14 +90,23 @@ const UserProfile = ({ darkMode, user }) => {
                                 <div className="flex flex-wrap items-center gap-4 justify-center">
                                     <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
                                         {<div className="relative scale-[180%] md:scale-[130%] lg:scale-150">
-                                            {!imageUrl ? <img alt="..." src={user && `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName}"&backgroundColor=F79918`}
+                                            {user && <div> {!imageUrl ? <img alt="..." src={user && `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName}"&backgroundColor=F79918`}
                                                 className="rounded-full sectionCover bg-center bg-cover object-cover shadow-2xl align-middle 
                                             w-[100px] h-[100px] md:w-[150px] md:h-[150px]  border-none" />
                                                 :
                                                 <img alt="..." src={imageUrl && `${imageUrl}`}
                                                     className="rounded-full sectionCover bg-center bg-cover object-cover shadow-2xl align-middle 
                                                 w-[100px] h-[100px] md:w-[150px] md:h-[150px] border-none" />
-                                            }
+                                            }</div>}
+                                            {author && <div>  {!imageUrlAu ? <img alt="..." src={author && `https://api.dicebear.com/5.x/initials/svg?seed=${author.firstName}"&backgroundColor=F79918`}
+                                                className="rounded-full sectionCover bg-center bg-cover object-cover shadow-2xl align-middle 
+                                            w-[100px] h-[100px] md:w-[150px] md:h-[150px]  border-none" />
+                                                :
+                                                <img alt="..." src={imageUrlAu && `${imageUrlAu}`}
+                                                    className="rounded-full sectionCover bg-center bg-cover object-cover shadow-2xl align-middle 
+                                                w-[100px] h-[100px] md:w-[150px] md:h-[150px] border-none" />
+                                            }</div>}
+
                                         </div>}
 
                                         {/* <div className="img_holder">
@@ -155,7 +141,7 @@ const UserProfile = ({ darkMode, user }) => {
                                     </div>
                                     <div className="w-full lg:w-4/12 px-4 lg:order-1">
                                         <div className="flex justify-center lg:py-4 lg:pt-4">
-                                            {user && <div onClick={() => { setShowBlogs(!showBlogs); setEdit(false); setAddBlog(false) }} className="mr-4 p-3 text-center cursor-pointer shadow-lg rounded-lg">
+                                            {user && <div className="mr-4 p-3 text-center shadow-lg rounded-lg">
                                                 <span className="text-2xl font-bold block uppercase tracking-wide text-blueGray-600 dark:text-[#fff]">{blogCount}</span><span className="text-2xl text-blueGray-400 dark:text-gray-300">Blogs</span>
                                             </div>}
                                             {author && <div className="mr-4 p-3 text-center  shadow-lg rounded-lg">
@@ -169,7 +155,7 @@ const UserProfile = ({ darkMode, user }) => {
                                 <div className="text-center lg:mt-12">
                                     {addBlog && < AddBlog user={user} darkMode={darkMode} />}
                                     {edit && < EditUserInfo user={user} />}
-                                    
+
                                     {!edit && !addBlog && !showBlogs &&
                                         <div>
                                             <div>
@@ -177,49 +163,65 @@ const UserProfile = ({ darkMode, user }) => {
                                                     {author && author.firstName} {author && author.lastName}
                                                     {user && user.firstName} {user && user.lastName}
                                                 </h3>
-                                                {user.profession && user.education &&
-                                                    <div>
-                                                        <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase dark:text-[#fff]">
-                                                            <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400 dark:text-gray-300" ></i>
-                                                            {author && author.country}
-                                                            {user && user.country}
-                                                        </div>
-                                                        <div className="mb-2 text-blueGray-600 mt-10 dark:text-[#fff]">
-                                                            <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400 dark:text-gray-300"></i>
-                                                            {author && author.profession}
-                                                            {user && user.profession}
-                                                        </div>
-                                                        <div className="mb-2 text-blueGray-600 dark:text-[#fff]">
-                                                            <i className="fas fa-university mr-2 text-lg text-blueGray-400 dark:text-gray-300"></i>
-                                                            {author && author.education}
-                                                            {user && user.education}
-                                                        </div>
+                                                <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase dark:text-[#fff]">
+                                                    <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400 dark:text-gray-300" ></i>
+                                                    {author && author.country}
+                                                    {user && user.country}
+                                                </div>
+                                                {author && author.profession &&
+                                                    <div className="mb-2 text-blueGray-600 mt-10 dark:text-[#fff]">
+                                                        <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400 dark:text-gray-300"></i>
+                                                        {author && author.profession}
+
+                                                    </div>}
+                                                {user && user.profession &&
+                                                    <div className="mb-2 text-blueGray-600 mt-10 dark:text-[#fff]">
+                                                        <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400 dark:text-gray-300"></i>
+                                                        {user && user.profession}
+
+                                                    </div>}
+
+                                                {author && author.education &&
+                                                    <div className="mb-2 text-blueGray-600 mt-10 dark:text-[#fff]">
+                                                        <i className="fas fa-university mr-2 text-lg text-blueGray-400 dark:text-gray-300"></i>
+                                                        {author && author.education}
+
+                                                    </div>}
+                                                {user && user.education &&
+                                                    <div className="mb-2 text-blueGray-600 mt-10 dark:text-[#fff]">
+                                                        <i className="fas fa-university mr-2 text-lg text-blueGray-400 dark:text-gray-300"></i>
+                                                        {user && user.education}
                                                     </div>}
                                             </div>
 
-                                            <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
-                                                <div className="flex flex-wrap justify-center">
-                                                    <div className="w-full lg:w-9/12 px-4">
-                                                        About
-                                                        {user && user.bio ? <p className="mb-4 text-lg leading-relaxed text-blueGray-700 dark:text-[#fff]">
-                                                            {user.bio}
-                                                        </p>
-                                                            :
-                                                            <p>....</p>
-                                                        }
-                                                        {author && author.bio ? <p className="mb-4 text-lg leading-relaxed text-blueGray-700 dark:text-[#fff]">
-                                                            {author.bio}
-                                                        </p>
-                                                            :
-                                                            <p>....</p>
-                                                        }
-
+                                            {author && author.bio &&
+                                                <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
+                                                    <div className="flex flex-wrap justify-center">
+                                                        <div className="w-full lg:w-9/12 px-4">
+                                                            About
+                                                            <p className="mb-4 text-lg leading-relaxed text-blueGray-700 dark:text-[#fff]">
+                                                                {author.bio}
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            }
+                                            {user && user.bio &&
+                                                <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
+                                                    <div className="flex flex-wrap justify-center">
+                                                        <div className="w-full lg:w-9/12 px-4">
+                                                            About
+                                                            <p className="mb-4 text-lg leading-relaxed text-blueGray-700 dark:text-[#fff]">
+                                                                {user.bio}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
 
 
-                                            < MyBlogs user={user}/>
+                                            {user && < MyBlogs user={user} />}
+                                            {author && < MyBlogs user={author} />}
 
                                         </div>
                                     }

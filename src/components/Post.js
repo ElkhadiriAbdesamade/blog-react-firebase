@@ -33,10 +33,11 @@ const Post = ({ blogs, user }) => {
                     </div>
                 </div>
 
-                {blogs.length === 0 && <div className="mb-52 py-10 px-10 mx-auto" >
+                {blogs.length === 0 && <div className="mb-52 py-10 px-10 mx-auto " >
                     <Alert
-                        color="warning"
+                        color="info"
                         withBorderAccent={true}
+                        className="shadow-xl dark:shadow-xl dark:shadow-slate-500"
                     >
                         <span>
                             <span className="font-medium">

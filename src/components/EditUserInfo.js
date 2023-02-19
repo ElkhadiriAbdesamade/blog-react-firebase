@@ -171,8 +171,8 @@ const EditUserInfo = ({ user }) => {
         setErrProfile('')
         let coverUrl = '';
         setLoadProfile(true);
-        console.log(firstName+'/'+ lastName+'/'+ country+'/'+ profession+'/'+ education+'/'+bio);
-        if (firstName === '' || lastName === '' || country === '' || bio === '' || profession === '' || education === '') {
+        // console.log(firstName+'/'+ lastName+'/'+ country+'/'+ profession+'/'+ education+'/'+bio);
+        if (firstName === '' || lastName === '' || country === '' ) {
             setErrProfile('Please Fill in All Your Info !!');
             setLoadProfile(false);
             return;
@@ -335,7 +335,7 @@ const EditUserInfo = ({ user }) => {
                             </div>
                         </div>
                         <div className="mb-6 flex flex-col items-start w-full">
-                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Profession :</h3>
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Profession (optional):</h3>
                             <input
                                 type="text"
                                 className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -345,7 +345,7 @@ const EditUserInfo = ({ user }) => {
                             />
                         </div>
                         <div className="mb-6 flex flex-col items-start w-full">
-                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Education :</h3>
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Education (optional):</h3>
                             <select className="bg-gray-50 border border-gray-300 text-black rounded focus:ring-blue-500 focus:border-blue-500 block w-full px-4 p-2.5"
                                 onChange={(event) => { setEducation(event.target.value) }}>
                                 {education ? <option selected={true}>{education}</option> :
@@ -360,7 +360,7 @@ const EditUserInfo = ({ user }) => {
                         </div>
                         <div className="flex flex-col items-start w-full
                             ">
-                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">your Bio :</h3>
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">your Bio (optional):</h3>
                             <div className="mb-6 w-full">
                                 <textarea className="form-control w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                     rows={6}
@@ -381,7 +381,7 @@ const EditUserInfo = ({ user }) => {
                                     onChange={(event) => { setImageUpload(event.target.files[0]); handleChangeImage(event) }} />
 
                             </div> */}
-                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Profile Image :</h3>
+                            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Profile Image (optional):</h3>
                             <div className="flex items-center justify-center w-full pb-4">
                                 <label style={{
                                     backgroundImage: `url(${image})`,
@@ -467,7 +467,7 @@ const EditUserInfo = ({ user }) => {
                         </div>
                         {msgConfirmation && <div className="text-center pt-4 lg:px-4 mb-4">
                             <div className="p-2 bg-red-500 items-center text-indigo-100 leading-none rounded-full inline-flex w-75" role="alert">
-                                <span className="flex rounded-full bg-red-700 uppercase px-2 py-1 text-xs font-bold mr-3">Confirmation</span>
+                                <span className="flex rounded-full bg-red-700 uppercase px-2 py-2 text-xs font-bold mr-3">Confirmation</span>
                                 <span className="font-semibold mr-2 text-left flex-auto">
                                     Are you sure !!
                                 </span>
@@ -480,7 +480,7 @@ const EditUserInfo = ({ user }) => {
                             </div>
                         </div>
                         }
-                        <button onClick={() => { setMsgConfirmation(true) }} className="bg-red-500 active:bg-red-700 uppercase text-white font-bold hover:shadow-md shadow text-2xl px-4 py-4 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150 w-full" type="button">
+                        <button onClick={() => { setMsgConfirmation(true) }} className="bg-red-500 active:bg-red-700 uppercase text-white font-bold hover:shadow-md shadow text-2xl px-4 py-3 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
                             <i className="fa-solid fa-trash mr-2"></i>
                             Delete Account
                         </button>

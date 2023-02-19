@@ -37,8 +37,9 @@ const MyBlogs = ({ user }) => {
                     <div id="t" className="mt-10 py-4 border-t border-blueGray-200 text-center"></div>
                     {blogs.length === 0 && <div className="mb-52 py-10 px-10 mx-auto" >
                         <Alert
-                            color="warning"
+                            color="info"
                             withBorderAccent={true}
+                            className="shadow-xl dark:shadow-xl dark:shadow-slate-500"
                         >
                             <span>
                                 <span className="font-medium">

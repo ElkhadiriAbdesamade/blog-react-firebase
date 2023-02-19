@@ -74,22 +74,17 @@ const SignIn = ({user}) => {
             });
 
     }
+
+
+
     useEffect(() => {
 
         if (user) {
             navigate('/');
         }
-        const keyDownHandler = event => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              handleSignIn();
-            }
-          };
-          document.addEventListener('keydown', keyDownHandler);
-          return () => {
-            document.removeEventListener('keydown', keyDownHandler);
-          };
-    }, [navigate,psw,user])
+        
+       
+    }, [])
     return (
 
         <section className="">

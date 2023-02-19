@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import { collection, getDocs, query, where } from '@firebase/firestore'
 import { db } from "../../firebase-config";
 import Disqus from "disqus-react"
-import LoadingPage from "../LodingPage";
+import LoadingPage from "../LoadingPage";
 const BlogDetails = () => {
     const { id } = useParams()
-    const [blog, setBlog] = useState();
+    const [blog, setBlog] = useState('');
     
     const disqusShortname = "http-localhost-3000-4eq1x2maft";
     let disqusConfig;
@@ -20,7 +20,11 @@ const BlogDetails = () => {
             const q = query(blogsCollectionRef, where('__name__', "==", id));
             const data = await getDocs(q);
             setBlog(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0]);
+            
 
+            if (data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))[0]===undefined) {
+                window.location.replace('/');
+            }
             disqusConfig = {
                 url: "http://localhost:3000",
                 identifier: id,
@@ -29,7 +33,7 @@ const BlogDetails = () => {
 
         };
         getBlog();
-        console.log(blog);
+       
     }, []);
     return (
         <div className="">

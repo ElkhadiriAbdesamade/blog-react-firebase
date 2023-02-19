@@ -27,7 +27,7 @@ const NotFound = () => {
 
                 <p>the page you are looking for not avaible!</p>
 
-                <a href="/" className="text-white px-[20px] py-[10px] bg-[#39ac31] my-[20px] w-[100px] rounded-md hover:scale-110 ease-in-out duration-700 shadow-lg">Go to Home {seconds}s</a>
+                <a href="/" className="text-white px-[20px] py-[10px] bg-[#39ac31] my-[20px] w-[180px] rounded-md hover:scale-110 ease-in-out duration-700 shadow-lg">Back to Home {seconds}s</a>
                 <img src="/404.gif" alt='404' className='text-center inline rounded-xl mb-5 shadow-xl' />
             </div>
 

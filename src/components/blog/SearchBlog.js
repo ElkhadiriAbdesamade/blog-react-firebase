@@ -7,6 +7,8 @@ import { useParams } from 'react-router-dom';
 import { BsChat } from 'react-icons/bs';
 import { db } from '../../firebase-config';
 import { Alert } from 'flowbite-react';
+import LoadingPage from '../LoadingPage';
+
 
 const SearchBlog = () => {
     const [blogs, setBlogs] = useState([]);
@@ -24,7 +26,7 @@ const SearchBlog = () => {
 
     return (
         <section className='pt-12 pb-0 max-w-[1320px] mx-auto '>
-            <div className='container'>
+            {!blogs ? <LoadingPage/>:<div className='container'>
                 <div className='flex justify-center mb-12'>
                     <div className='text-center'>
                         <h2 className='font-bold text-[40px]'>Search Result</h2>
@@ -33,7 +35,7 @@ const SearchBlog = () => {
 
                 {blogs.length === 0 && <div className="mb-52 py-10 px-10 mx-auto" >
                     <Alert
-                        color="warning"
+                        color="info"
                         withBorderAccent={true}
                     >
                         <span>
@@ -97,7 +99,7 @@ const SearchBlog = () => {
 
                 </div>
 
-            </div>
+            </div>}
         </section>
     );
 }

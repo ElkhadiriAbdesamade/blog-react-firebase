@@ -1,7 +1,7 @@
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import { collection, getDocs, query,limit } from '@firebase/firestore'
+import { collection, getDocs, query, limit } from '@firebase/firestore'
 
 // Import Swiper styles
 import "swiper/css";
@@ -36,10 +36,11 @@ const Trending = () => {
                         <h2 className='font-bold text-[40px]'>Trending</h2>
                     </div>
                 </div>
-                {blogs.length===0 && <div className=" py-10 px-10 mx-auto" >
+                {blogs.length === 0 && <div className=" py-10 px-10 mx-auto" >
                     <Alert
-                        color="warning"
+                        color="info"
                         withBorderAccent={true}
+                        className="shadow-xl dark:shadow-xl dark:shadow-slate-500"
                     >
                         <span>
                             <span className="font-medium">
@@ -67,13 +68,13 @@ const Trending = () => {
                     >
                         {blogs.map((blog) => (
                             <SwiperSlide key={blog.id}>
-                                <div className="grid md:grid-flow-col dark:bg-[#50577A] p-8">
+                                <div className="grid lg:grid-flow-col dark:bg-[#50577A] p-8 w-full md:h-[700px] lg:h-[500px]">
                                     <div className="inline-grid md:mr-8 ">
                                         <a href="/">
-                                            <img src={`${blog.blogImg}`} style={{height:"400px !important"}} alt="Img" className="w-[400px] rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
+                                            <img src={`${blog.blogImg}`} style={{ height: "400px !important" }} alt="Img" className="w-[400px] rounded-xl shadow-xl dark:shadow-xl dark:shadow-slate-500" />
                                         </a>
                                     </div>
-                                    <div className="self-center text-[14px] inline-grid ">
+                                    <div className="self-center text-[14px] inline-grid w-full">
                                         <div className="mb-4 text-left " >
                                             {blog.category.map((cat) => (
                                                 <span className="font-bold text-[#222] dark:text-white" key={cat}>{cat},&nbsp;</span>
@@ -83,24 +84,24 @@ const Trending = () => {
                                         </div>
                                         <h2 className='font-bold text-[40px] text-left leading-[1.2] mb-2'><a href={`/blogDetails/${blog.id}`}>{blog.title}.</a></h2>
                                         <p className="text-left text-[#999] mb-4 dark:text-white">
-                                        {blog.desc.substring(0,100)+"..."}.
+                                            {blog.desc.substring(0, 100) + "..."}.
                                         </p>
                                         <div className="flex">
-                                    <a href={`/Author/${blog.user.id}`} className="flex items-center">
-                                        <div className="h-11 flex-grow-0 flex-shrink-0 basis-11 mr-[10px]">
-                                        {!blog.user.coverUrl ? <img alt="..." src={`https://api.dicebear.com/5.x/initials/svg?seed=${blog.user.firstName}"&backgroundColor=F79918`}
-                                            className="h-11 max-w-full rounded-full" />
-                                            :
-                                            <img className="h-11 max-w-full rounded-full" src={`${blog.user.coverUrl}`} alt="Img" />
-                                            }
+                                            <a href={`/Author/${blog.user.id}`} className="flex items-center">
+                                                <div className="h-11 flex-grow-0 flex-shrink-0 basis-11 mr-[10px]">
+                                                    {!blog.user.coverUrl ? <img alt="..." src={`https://api.dicebear.com/5.x/initials/svg?seed=${blog.user.firstName}"&backgroundColor=F79918`}
+                                                        className="h-11 max-w-full rounded-full" />
+                                                        :
+                                                        <img className="h-11 max-w-full rounded-full" src={`${blog.user.coverUrl}`} alt="Img" />
+                                                    }
+                                                </div>
+                                                <div className="flex flex-col items-start">
+                                                    <strong>{blog.user.firstName} {blog.user.lastName}</strong>
+                                                    <span>{blog.user.email}</span>
+                                                </div>
+                                            </a>
+
                                         </div>
-                                        <div className="flex flex-col items-start">
-                                            <strong>{blog.user.firstName} {blog.user.lastName}</strong>
-                                            <span>{blog.user.email}</span>
-                                        </div>
-                                    </a>
-                                    
-                                </div>
                                     </div>
 
                                 </div>

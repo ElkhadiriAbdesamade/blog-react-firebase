@@ -12,7 +12,7 @@ import NotFound from "./components/NotFound";
 import { collection, getDocs, query, where } from '@firebase/firestore'
 import { auth, db } from '../src/firebase-config';
 import UserProfile from "./components/UserProfile";
-import LoadingPage from "./components/LodingPage";
+import LoadingPage from "./components/LoadingPage";
 import BlogDetails from "./components/blog/BlogDetails";
 import EditBlog from "./components/blog/EditBlog";
 import SearchBlog from "./components/blog/SearchBlog";

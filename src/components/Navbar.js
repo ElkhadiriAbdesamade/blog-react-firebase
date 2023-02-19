@@ -24,7 +24,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
     const [showNav, setShowNav] = useState(false);
     //const [email, setEmail] = useState('');
     const handleSearch = () => {
-        if (search) {
+        if (search!=='') {
             window.location.replace('/search/' + search)
         } else {
             setSearchAlert('Serrch Value Required');
@@ -52,6 +52,7 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
         });
 
     }
+   
     useEffect(() => {
         listAll(imagesListRef).then((response) => {
             response.items.forEach((item) => {
@@ -63,10 +64,8 @@ const Navbar = ({ darkMode, setDarkMode, user }) => {
             });
 
         });
-
-
-
         setYear(new Date().getFullYear());
+
     }, [user])
 
     return (
